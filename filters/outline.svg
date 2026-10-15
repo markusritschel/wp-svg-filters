@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+  <filter id="fx-outline" x="-10%" y="-10%" width="120%" height="120%">
+    <feMorphology in="SourceAlpha" operator="dilate" radius="3" result="thick"/>
+    <feComposite in="thick" in2="SourceAlpha" operator="out" result="ring"/>
+    <feFlood flood-color="#3a40d1" result="ink"/>
+    <feComposite in="ink" in2="ring" operator="in"/>
+  </filter>
+</svg>

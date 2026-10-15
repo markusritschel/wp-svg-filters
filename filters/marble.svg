@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+  <filter id="fx-marble" color-interpolation-filters="sRGB">
+    <feTurbulence type="fractalNoise" baseFrequency=".012 .07" numOctaves="4" seed="7" result="veins"/>
+    <feColorMatrix in="veins" type="matrix" values="2.2 0 0 0 -.45  0 1.1 0 0 -.1  0 0 2.6 0 -.25  0 0 0 0 1" result="color"/>
+    <feComposite in="color" in2="SourceAlpha" operator="in"/>
+  </filter>
+</svg>

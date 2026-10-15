@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+  <filter id="fx-tint" color-interpolation-filters="sRGB">
+    <feFlood flood-color="#e0705b" result="tone"/>
+    <feBlend in="tone" in2="SourceGraphic" mode="color" result="tinted"/>
+    <feComposite in="tinted" in2="SourceAlpha" operator="in"/>
+  </filter>
+</svg>

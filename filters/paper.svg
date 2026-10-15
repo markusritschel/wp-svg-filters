@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+  <filter id="fx-paper" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+    <feTurbulence type="fractalNoise" baseFrequency=".045" numOctaves="5" result="fibres"/>
+    <feDiffuseLighting in="fibres" surfaceScale="2" lighting-color="#ffffff" result="relief">
+      <feDistantLight azimuth="45" elevation="58"/>
+    </feDiffuseLighting>
+    <feBlend in="SourceGraphic" in2="relief" mode="multiply" result="printed"/>
+    <feComposite in="printed" in2="SourceAlpha" operator="in"/>
+  </filter>
+</svg>

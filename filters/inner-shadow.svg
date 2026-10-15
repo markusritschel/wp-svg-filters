@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+  <filter id="fx-inner-shadow">
+    <feComponentTransfer in="SourceAlpha" result="inverse">
+      <feFuncA type="table" tableValues="1 0"/>
+    </feComponentTransfer>
+    <feGaussianBlur in="inverse" stdDeviation="4"/>
+    <feOffset dx="4" dy="6" result="offsetBlur"/>
+    <feFlood flood-color="#000000" flood-opacity=".65"/>
+    <feComposite in2="offsetBlur" operator="in"/>
+    <feComposite in2="SourceAlpha" operator="in" result="shadow"/>
+    <feMerge>
+      <feMergeNode in="SourceGraphic"/>
+      <feMergeNode in="shadow"/>
+    </feMerge>
+  </filter>
+</svg>

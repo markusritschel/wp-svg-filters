@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+  <filter id="fx-liquid" x="0" y="0" width="100%" height="100%">
+    <feTurbulence type="fractalNoise" baseFrequency=".008 .012" numOctaves="2" seed="3" result="lens"/>
+    <feGaussianBlur in="lens" stdDeviation="2" result="smooth"/>
+    <feDisplacementMap in="SourceGraphic" in2="smooth" scale="70" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+</svg>

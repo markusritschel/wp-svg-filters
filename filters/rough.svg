@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+  <filter id="fx-rough" x="-10%" y="-10%" width="120%" height="120%">
+    <feTurbulence type="turbulence" baseFrequency=".045" numOctaves="2" seed="2" result="jitter"/>
+    <feDisplacementMap in="SourceGraphic" in2="jitter" scale="7" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+</svg>

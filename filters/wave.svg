@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+  <filter id="fx-wave">
+    <feTurbulence type="fractalNoise" baseFrequency=".008 .03" numOctaves="2" seed="4" result="map"/>
+    <feDisplacementMap in="SourceGraphic" in2="map" scale="28" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+</svg>

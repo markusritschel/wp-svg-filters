@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+  <filter id="fx-bevel" x="-10%" y="-10%" width="120%" height="120%">
+    <feGaussianBlur in="SourceAlpha" stdDeviation="3" result="height"/>
+    <feSpecularLighting in="height" surfaceScale="5" specularConstant="1.1" specularExponent="22" lighting-color="#ffffff" result="shine">
+      <feDistantLight azimuth="225" elevation="42"/>
+    </feSpecularLighting>
+    <feComposite in="shine" in2="SourceAlpha" operator="in" result="shineIn"/>
+    <feComposite in="SourceGraphic" in2="shineIn" operator="arithmetic" k2="1" k3="1"/>
+  </filter>
+</svg>
