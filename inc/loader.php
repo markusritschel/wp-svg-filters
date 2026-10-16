@@ -15,6 +15,13 @@
  *   svgf_directory     (string) absolute path of the folder with the SVG files
  *   svgf_bg_variants   (bool)   generate the --bg classes, default true
  *   svgf_load_assets   (bool)   enqueue glass CSS + interactive JS, default true
+ *   svgf_extra_sources (string[]) more SVG markup with <filter> elements, e.g. from
+ *                      a plugin's database; collected after the files (file IDs win)
+ *   svgf_extra_defs    (string) markup appended inside the printed <defs>, e.g. tuned
+ *                      filter copies; not sanitized, callers pass trusted markup
+ *
+ * svgf_filters() returns per-filter metadata (title, desc, category, tuning
+ * hints) read from the unstripped markup.
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -43,10 +50,12 @@ function svgf_url( $rel ) {
 }
 
 /**
- * Collect filter markup and IDs from all SVG files. Cached per request and
- * in a transient keyed on file names + modification times.
+ * Collect filter markup and IDs from all SVG files and extra sources. Cached
+ * per request and in a transient keyed on file names + modification times
+ * and the extra sources.
  *
- * @return array{markup:string, ids:string[]}
+ * @return array{markup:string, ids:string[], raw:array<string,string>}
+ *         raw: per ID the <filter> with its data-* metadata, for svgf_filters().
  */
 function svgf_collect() {
 	static $cache = null;
@@ -54,46 +63,122 @@ function svgf_collect() {
 		return $cache;
 	}
 
-	$dir   = apply_filters( 'svgf_directory', SVGF_DIR . '/filters' );
-	$files = glob( trailingslashit( $dir ) . '*.svg' ) ?: array();
+	$dir    = apply_filters( 'svgf_directory', SVGF_DIR . '/filters' );
+	$files  = glob( trailingslashit( $dir ) . '*.svg' ) ?: array();
+	$extras = array_values( array_filter( (array) apply_filters( 'svgf_extra_sources', array() ), 'is_string' ) );
 	sort( $files );
 
-	// 'markup2': bump when the extraction below changes, so cached markup from older code is rebuilt.
+	// 'markup3': bump when the extraction below changes, so cached markup from older code is rebuilt.
 	$signature = md5( $dir . '|' . implode( '|', array_map( static function ( $f ) {
 		return basename( $f ) . ':' . filemtime( $f );
-	}, $files ) ) . '|' . SVGF_VERSION . '|markup2' );
+	}, $files ) ) . '|' . md5( implode( "\0", $extras ) ) . '|' . SVGF_VERSION . '|markup3' );
 
 	$stored = get_transient( 'svgf_cache' );
 	if ( is_array( $stored ) && ( $stored['sig'] ?? '' ) === $signature ) {
 		return $cache = $stored['data'];
 	}
 
-	$data = array( 'markup' => '', 'ids' => array() );
+	$data    = array( 'markup' => '', 'ids' => array(), 'raw' => array() );
+	$sources = array_merge( array_map( static function ( $f ) {
+		return (string) file_get_contents( $f );
+	}, $files ), $extras );
 
-	foreach ( $files as $file ) {
-		$svg = (string) file_get_contents( $file );
-
+	foreach ( $sources as $svg ) {
 		// Basic hardening: theme files are trusted, but never pass on scripts or event handlers.
 		$svg = preg_replace( '#<script\b.*?</script>#is', '', $svg );
 		$svg = preg_replace( '#\son[a-z]+\s*=\s*("[^"]*"|\'[^\']*\')#i', '', $svg );
 
-		// data-* attributes are metadata for the demo site and README, not needed on the page.
-		$svg = preg_replace( '#\sdata-[\w.:-]+\s*=\s*("[^"]*"|\'[^\']*\')#', '', $svg );
-
-		if ( ! preg_match_all( '#<filter\b[^>]*\bid="([^"]+)"[^>]*>.*?</filter>#s', $svg, $m ) ) {
+		// \sid, not \bid: data-* attributes are still present here (data-id would match \bid).
+		if ( ! preg_match_all( '#<filter\b[^>]*\sid="([^"]+)"[^>]*>.*?</filter>#s', $svg, $m ) ) {
 			continue;
 		}
 		foreach ( $m[1] as $i => $id ) {
 			if ( in_array( $id, $data['ids'], true ) ) {
-				continue; // duplicate ID: first file wins
+				continue; // duplicate ID: first source wins (files before extras)
 			}
-			$data['ids'][]   = $id;
-			$data['markup'] .= $m[0][ $i ] . "\n";
+			$data['ids'][]     = $id;
+			$data['raw'][ $id ] = $m[0][ $i ];
+
+			// data-* attributes are metadata for the demo site, README and svgf_filters(), not needed on the page.
+			$data['markup'] .= preg_replace( '#\sdata-[\w.:-]+\s*=\s*("[^"]*"|\'[^\']*\')#', '', $m[0][ $i ] ) . "\n";
 		}
 	}
 
 	set_transient( 'svgf_cache', array( 'sig' => $signature, 'data' => $data ), WEEK_IN_SECONDS );
 	return $cache = $data;
+}
+
+/**
+ * Metadata of every collected filter, in collection order.
+ *
+ * Tuning hints (data-tweak-<attribute>) are keyed '<primitive>|<attribute>',
+ * where <primitive> is '#<id>' for primitives with an id, otherwise the tag
+ * name, with ':<n>' from its second occurrence on (feComposite:2).
+ *
+ * @return array<string, array{id:string, title:string, desc:string, category:string,
+ *         tweaks:array<int, array{key:string, attr:string, default:string, hint:string}>, markup:string}>
+ *         markup: the printable <filter> without data-* attributes.
+ */
+function svgf_filters() {
+	static $filters = null;
+	if ( null !== $filters ) {
+		return $filters;
+	}
+
+	$data    = svgf_collect();
+	$filters = array();
+
+	foreach ( $data['ids'] as $id ) {
+		$raw  = $data['raw'][ $id ] ?? '';
+		$meta = array(
+			'id'       => $id,
+			'title'    => '',
+			'desc'     => '',
+			'category' => '',
+			'tweaks'   => array(),
+			'markup'   => preg_replace( '#\sdata-[\w.:-]+\s*=\s*("[^"]*"|\'[^\']*\')#', '', $raw ),
+		);
+
+		$doc  = new DOMDocument();
+		$prev = libxml_use_internal_errors( true );
+		$ok   = $doc->loadXML( '<svg xmlns="http://www.w3.org/2000/svg">' . $raw . '</svg>', LIBXML_NONET );
+		libxml_clear_errors();
+		libxml_use_internal_errors( $prev );
+
+		$filter = $ok ? $doc->getElementsByTagName( 'filter' )->item( 0 ) : null;
+		if ( $filter ) {
+			foreach ( array( 'title', 'desc' ) as $tag ) {
+				$node         = $filter->getElementsByTagName( $tag )->item( 0 );
+				$meta[ $tag ] = $node ? trim( $node->textContent ) : '';
+			}
+			$meta['category'] = $filter->getAttribute( 'data-category' );
+
+			$seen = array();
+			foreach ( $filter->getElementsByTagName( '*' ) as $el ) {
+				$tag          = $el->localName;
+				$seen[ $tag ] = ( $seen[ $tag ] ?? 0 ) + 1;
+				$primitive    = $el->hasAttribute( 'id' ) ? '#' . $el->getAttribute( 'id' )
+					: ( 1 === $seen[ $tag ] ? $tag : $tag . ':' . $seen[ $tag ] );
+
+				foreach ( $el->attributes as $attr ) {
+					if ( 0 !== strpos( $attr->name, 'data-tweak-' ) ) {
+						continue;
+					}
+					$name             = substr( $attr->name, strlen( 'data-tweak-' ) );
+					$meta['tweaks'][] = array(
+						'key'     => $primitive . '|' . $name,
+						'attr'    => $name,
+						'default' => $el->getAttribute( $name ),
+						'hint'    => $attr->value,
+					);
+				}
+			}
+		}
+
+		$filters[ $id ] = $meta;
+	}
+
+	return $filters;
 }
 
 /**
@@ -110,15 +195,16 @@ function svgf_print_defs() {
 	if ( $printed ) {
 		return;
 	}
-	$data = svgf_collect();
-	if ( '' === $data['markup'] ) {
+	$data  = svgf_collect();
+	$extra = (string) apply_filters( 'svgf_extra_defs', '' );
+	if ( '' === $data['markup'] && '' === $extra ) {
 		return;
 	}
 	$printed = true;
 
 	echo "\n" . '<svg id="svgf-defs" aria-hidden="true" focusable="false" width="0" height="0" '
 		. 'style="position:absolute;width:0;height:0;overflow:hidden" xmlns="http://www.w3.org/2000/svg">'
-		. '<defs>' . $data['markup'] . '</defs></svg>' . "\n";
+		. '<defs>' . $data['markup'] . $extra . '</defs></svg>' . "\n";
 }
 add_action( 'wp_footer', 'svgf_print_defs', 1 );
 
