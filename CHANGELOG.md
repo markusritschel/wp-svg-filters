@@ -8,6 +8,9 @@ must match `SVGF_VERSION` in `svg-filters.php`.
 
 ### Added
 
+- Tuning hints (`data-tweak-<attribute>`, optional `[min, max]` range) on
+  the primitives worth editing; shown on the demo site and as a *Tunable*
+  column in the README filter table.
 - Filter metadata inside every `<filter>`: `<title>`, `<desc>` and
   `data-category`, `data-support`, `data-cost`, `data-demo` (optional
   `data-note`, `data-demo-text`, `data-demo-bg`). The loader ignores them;

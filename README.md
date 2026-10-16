@@ -117,31 +117,31 @@ Generated from the metadata in the SVG files (see below). The
 live.
 
 <!-- filters:start -->
-| File | Class | Category | Description | Notes |
-|---|---|---|---|---|
-| duotone.svg | `fx-duotone` | color | Converts to grayscale, then maps shadows and highlights to two brand colors with table lookups. | Set the two colors in the `tableValues` of feFuncR/G/B. |
-| posterize.svg | `fx-posterize` | color | Discrete steps per channel flatten gradients into screen-print bands. |  |
-| threshold.svg | `fx-threshold` | color | Cuts luminance into two ink tones for stencil and photocopy looks. |  |
-| tint.svg | `fx-tint` | color | Keeps luminance and replaces hue and saturation with a flood color through the `color` blend mode. | Change `flood-color`. |
-| grain.svg | `fx-grain` | texture | Blends high-frequency mono noise with `overlay` and mixes it back at about half strength. |  |
-| paper.svg | `fx-paper` | texture | Lights low-frequency noise as a height map and multiplies it over the image like a print on cotton paper. |  |
-| blur.svg | `fx-blur` | distortion | Gaussian blur whose edges fade out, for elements, text, icons and shapes. |  |
-| blur.svg | `fx-blur-solid` | distortion | Gaussian blur with duplicated edges and forced opacity, so rectangular images and backgrounds keep a crisp border. | Makes transparent areas opaque: not for text or cut-out shapes. Pair it with the `--bg` class. |
-| glitch.svg | `fx-glitch` | distortion | Splits the channels, offsets red and blue, recombines them with `screen` and slices the result with horizontal band noise. |  |
-| rough.svg | `fx-rough` | distortion | Small, busy displacement gives type and icons a hand-cut, ink-bleed edge. | Best on text and icons. |
-| wave.svg | `fx-wave` | distortion | Anisotropic noise (low x, higher y frequency) displaces the image into horizontal ripples like a reflection. |  |
-| goo.svg | `fx-goo` | shape | Blurs, then snaps the halo back to a hard edge with a steep alpha curve, so nearby shapes fuse like liquid. | Apply it to the parent of the moving shapes. |
-| outline.svg | `fx-outline` | shape | Dilates the alpha, subtracts the original and fills the remaining ring with a flood color. | Change `flood-color`. Works on text, icons and any shape. |
-| bevel.svg | `fx-bevel` | light | Blurred alpha becomes a height map whose specular highlight is added back onto the source as a glossy rim. | Text and icons. |
-| emboss.svg | `fx-emboss` | light | A 3×3 convolution kernel; swap the kernel for sharpen, edge detect or box blur. |  |
-| inner-shadow.svg | `fx-inner-shadow` | light | Inverts the alpha, blurs and offsets it and clips it to the shape, which CSS `box-shadow: inset` cannot do on text. | Text and icons. |
-| marble.svg | `fx-marble` | fill | Stretched noise, recolored with a matrix and clipped to the source alpha, so text stays real, selectable text. | Text and icons. |
-| liquid.svg | `fx-liquid` | glass | Displaces the backdrop through a smooth noise lens so content behind the pane bends; other browsers get a frosted fallback. | Chromium only. Use it through `.glass .glass--liquid` (backdrop-filter), not as an `.fx-` class. |
-| grain-anim.svg | `fx-grain-anim` | motion | Steps the noise `seed` discretely at about 12 fps for a projected-film flicker. |  |
-| hue-cycle.svg | `fx-hue-cycle` | motion | Rotates the hue through 360° with a single animated attribute, the cheapest animated filter there is. |  |
-| melt.svg | `fx-melt` | motion | The displacement `scale` eases from 0 to 45 on hover, or on tap on touch screens. | Needs `assets/svg-filters.js`. Duplicate the file with a new ID for independent instances. |
-| spotlight.svg | `fx-spotlight` | motion | JavaScript moves an `fePointLight` to the pointer over a noise surface. | Needs `assets/svg-filters.js`. All `.fx-spotlight` elements share one light. |
-| wave-anim.svg | `fx-wave-anim` | motion | SMIL animates `baseFrequency`, so the distortion field breathes. |  |
+| File | Class | Category | Description | Tunable | Notes |
+|---|---|---|---|---|---|
+| duotone.svg | `fx-duotone` | color | Converts to grayscale, then maps shadows and highlights to two brand colors with table lookups. | `tableValues` |  |
+| posterize.svg | `fx-posterize` | color | Discrete steps per channel flatten gradients into screen-print bands. | `tableValues` |  |
+| threshold.svg | `fx-threshold` | color | Cuts luminance into two ink tones for stencil and photocopy looks. | `tableValues` |  |
+| tint.svg | `fx-tint` | color | Keeps luminance and replaces hue and saturation with a flood color through the `color` blend mode. | `flood-color` |  |
+| grain.svg | `fx-grain` | texture | Blends high-frequency mono noise with `overlay` and mixes it back at about half strength. | `baseFrequency`, `k2`, `k3` |  |
+| paper.svg | `fx-paper` | texture | Lights low-frequency noise as a height map and multiplies it over the image like a print on cotton paper. | `baseFrequency`, `surfaceScale` |  |
+| blur.svg | `fx-blur` | distortion | Gaussian blur whose edges fade out, for elements, text, icons and shapes. | `stdDeviation` |  |
+| blur.svg | `fx-blur-solid` | distortion | Gaussian blur with duplicated edges and forced opacity, so rectangular images and backgrounds keep a crisp border. | `stdDeviation` | Makes transparent areas opaque: not for text or cut-out shapes. Pair it with the `--bg` class. |
+| glitch.svg | `fx-glitch` | distortion | Splits the channels, offsets red and blue, recombines them with `screen` and slices the result with horizontal band noise. | `dx`, `baseFrequency`, `scale` |  |
+| rough.svg | `fx-rough` | distortion | Small, busy displacement gives type and icons a hand-cut, ink-bleed edge. | `baseFrequency`, `scale` | Best on text and icons. |
+| wave.svg | `fx-wave` | distortion | Anisotropic noise (low x, higher y frequency) displaces the image into horizontal ripples like a reflection. | `baseFrequency`, `scale` |  |
+| goo.svg | `fx-goo` | shape | Blurs, then snaps the halo back to a hard edge with a steep alpha curve, so nearby shapes fuse like liquid. | `stdDeviation` | Apply it to the parent of the moving shapes. |
+| outline.svg | `fx-outline` | shape | Dilates the alpha, subtracts the original and fills the remaining ring with a flood color. | `radius`, `flood-color` | Works on text, icons and any shape. |
+| bevel.svg | `fx-bevel` | light | Blurred alpha becomes a height map whose specular highlight is added back onto the source as a glossy rim. | `stdDeviation`, `surfaceScale`, `lighting-color`, `azimuth` | Text and icons. |
+| emboss.svg | `fx-emboss` | light | A 3×3 convolution kernel; swap the kernel for sharpen, edge detect or box blur. | `kernelMatrix` |  |
+| inner-shadow.svg | `fx-inner-shadow` | light | Inverts the alpha, blurs and offsets it and clips it to the shape, which CSS `box-shadow: inset` cannot do on text. | `stdDeviation`, `dx`, `dy`, `flood-color`, `flood-opacity` | Text and icons. |
+| marble.svg | `fx-marble` | fill | Stretched noise, recolored with a matrix and clipped to the source alpha, so text stays real, selectable text. | `baseFrequency`, `seed` | Text and icons. |
+| liquid.svg | `fx-liquid` | glass | Displaces the backdrop through a smooth noise lens so content behind the pane bends; other browsers get a frosted fallback. | `baseFrequency`, `scale` | Chromium only. Use it through `.glass .glass--liquid` (backdrop-filter), not as an `.fx-` class. |
+| grain-anim.svg | `fx-grain-anim` | motion | Steps the noise `seed` discretely at about 12 fps for a projected-film flicker. | `baseFrequency`, `dur` |  |
+| hue-cycle.svg | `fx-hue-cycle` | motion | Rotates the hue through 360° with a single animated attribute, the cheapest animated filter there is. | `dur` |  |
+| melt.svg | `fx-melt` | motion | The displacement `scale` eases from 0 to 45 on hover, or on tap on touch screens. | `baseFrequency` | Needs `assets/svg-filters.js`. Duplicate the file with a new ID for independent instances. |
+| spotlight.svg | `fx-spotlight` | motion | JavaScript moves an `fePointLight` to the pointer over a noise surface. | `lighting-color`, `surfaceScale`, `z` | Needs `assets/svg-filters.js`. All `.fx-spotlight` elements share one light. |
+| wave-anim.svg | `fx-wave-anim` | motion | SMIL animates `baseFrequency`, so the distortion field breathes. | `dur`, `scale` |  |
 <!-- filters:end -->
 
 ### Glass
@@ -184,6 +184,18 @@ them:
 | `data-note`      | optional usage tip; `` `code` `` in backticks                                 |
 | `data-demo-text` | optional word shown by the `type` demo                                        |
 | `data-demo-bg`   | optional `dark` background for the `type` demo                                |
+
+The attributes above go on the `<filter>`. Tuning hints go on the primitive
+whose attribute they describe, as `data-tweak-<attribute>`, with an optional
+`[min, max]` range:
+
+```xml
+<feGaussianBlur stdDeviation="8" data-tweak-stdDeviation="[0, 30] Blur radius in px; higher is softer"/>
+```
+
+The demo site lists them under *Tune it* (with live controls) and the
+table above shows them as *Tunable*. Leave out attributes that an
+`<animate>` or `assets/svg-filters.js` overwrites.
 
 Don't use `>` inside attribute values: the loader extracts filters with a
 regular expression.
