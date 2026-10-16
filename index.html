@@ -486,6 +486,47 @@
       .tune .val {
         color: var(--ink);
       }
+      .tune input {
+        display: block;
+        margin-top: 6px;
+        accent-color: var(--accent);
+      }
+      .tune input[type="range"] {
+        width: 100%;
+      }
+      .tune input[type="color"] {
+        width: 44px;
+        height: 26px;
+        padding: 0 2px;
+        border: 1px solid var(--line);
+        border-radius: 5px;
+        background: var(--surface);
+        cursor: pointer;
+      }
+      .tune input[type="text"] {
+        width: 100%;
+        font: 400 12px var(--f-mono);
+        color: var(--ink);
+        background: var(--code-bg);
+        border: 1px solid var(--line);
+        border-radius: 5px;
+        padding: 4px 6px;
+      }
+      .tune-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 10px;
+      }
+      .tune-actions button {
+        font: 600 11px var(--f-body);
+        background: var(--surface);
+        color: var(--ink);
+        border: 1px solid var(--line);
+        border-radius: 5px;
+        padding: 4px 9px;
+        cursor: pointer;
+      }
       .codebox {
         position: relative;
         margin-top: 8px;
@@ -1317,8 +1358,11 @@ require_once get_stylesheet_directory() . '/svg-filters/svg-filters.php';</pre>
               <h3>Tuning filters</h3>
               <p>
                 <em>Tune it</em> on each card lists the values worth changing,
-                with a sensible range. They are plain attributes in the SVG
-                file; edit them there. Knobs most filters share:
+                with a sensible range, and lets you try them on the live swatch.
+                <em>Copy … with these values</em> gives you the file with your
+                values filled in; save it in <code>filters/</code>. The values are
+                plain attributes, so you can also edit them in the file directly.
+                Knobs most filters share:
               </p>
               <ul>
                 <li>
@@ -1614,6 +1658,47 @@ require_once get_stylesheet_directory() . '/svg-filters/svg-filters.php';</pre>
           const on = cmp.getAttribute("aria-pressed") !== "true";
           cmp.setAttribute("aria-pressed", String(on));
           document.documentElement.classList.toggle("compare", on);
+        });
+
+        // Tune it: controls edit the live filter; "Copy … with these values" patches the real file
+        const xmlEsc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
+        document.querySelectorAll("details.tune").forEach((panel) => {
+          const card = panel.closest(".card");
+          const controls = [...panel.querySelectorAll("input[data-attr]")];
+          const valueOf = (c) => (c.type === "range" ? c.value + c.dataset.unit : c.value);
+          const changed = (c) =>
+            c.type === "range" ? Math.abs(c.value - c.defaultValue) > 1e-9 : c.value !== c.defaultValue;
+          const apply = (c) => {
+            const el = document.getElementById(c.dataset.filter).querySelectorAll("*")[+c.dataset.index];
+            if (changed(c)) el.setAttribute(c.dataset.attr, valueOf(c));
+            else el.setAttribute(c.dataset.attr, c.closest("dd").querySelector(".val").dataset.orig);
+            c.closest("dd").querySelector(".val").textContent = el.getAttribute(c.dataset.attr);
+          };
+          controls.forEach((c) => {
+            const val = c.closest("dd").querySelector(".val");
+            val.dataset.orig = val.textContent; // the file's exact value, e.g. ".65" rather than "0.65"
+            c.addEventListener("input", () => apply(c));
+          });
+          panel.querySelector(".reset").addEventListener("click", () =>
+            controls.forEach((c) => { c.value = c.defaultValue; apply(c); }),
+          );
+          const btn = panel.querySelector(".copy-tuned");
+          const label = btn.textContent;
+          btn.addEventListener("click", () => {
+            let text = card.querySelector("details.code pre").textContent;
+            controls.filter(changed).sort((a, b) => b.dataset.start - a.dataset.start).forEach((c) => {
+              text = text.slice(0, +c.dataset.start) + xmlEsc(valueOf(c)) + text.slice(+c.dataset.end);
+            });
+            const done = () => { btn.textContent = "Copied"; setTimeout(() => (btn.textContent = label), 1400); };
+            const fallback = () => {
+              const ta = Object.assign(document.createElement("textarea"), { value: text });
+              document.body.appendChild(ta); ta.select();
+              const ok = document.execCommand("copy");
+              ta.remove();
+              ok ? done() : (btn.textContent = "Copy failed");
+            };
+            try { navigator.clipboard.writeText(text).then(done, fallback); } catch (e) { fallback(); }
+          });
         });
 
         // Before/after sliders: drag or click on the swatch; arrow keys via the hidden range input

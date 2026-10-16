@@ -122,10 +122,30 @@ const codePanel = rel => {
     + `<pre>${esc(content)}</pre><button class="copy" type="button">Copy</button></div></details>`;
 };
 
+/**
+ * Live control for a hint: color picker for #hex, slider for one number (unit kept),
+ * text field for lists. data-* tell the page JS which primitive and file range it edits.
+ */
+function control(f, t) {
+  const target = `data-filter="${f.id}" data-index="${t.index}" data-attr="${esc(t.attr)}" data-start="${t.start}" data-end="${t.end}" aria-label="${esc(`${t.attr} (${t.el})`)}"`;
+  if (/^#[0-9a-f]{6}$/i.test(t.value)) return `<input type="color" value="${t.value.toLowerCase()}" ${target}>`;
+  const num = t.value.match(/^(-?\d*\.?\d+)([a-z%]*)$/i);
+  if (num) {
+    const v = Number(num[1]);
+    const [min, max] = t.min !== undefined ? [Number(t.min), Number(t.max)] : [Math.min(0, v * 3), Math.max(1, v * 3)];
+    let step = 10 ** (Math.floor(Math.log10(max - min)) - 2);
+    if (Math.abs((v - min) / step - Math.round((v - min) / step)) > 1e-6) step = 'any'; // never snap the file's value
+    return `<input type="range" min="${min}" max="${max}" step="${step}" value="${v}" data-unit="${num[2]}" ${target}>`;
+  }
+  return `<input type="text" value="${esc(t.value)}" spellcheck="false" ${target}>`;
+}
+
 const tunePanel = f => !f.tweaks.length ? '' : `<details class="tune"><summary>Tune it (${f.tweaks.length})</summary><dl>`
   + f.tweaks.map(t => `<div><dt><code>${esc(t.attr)}</code> <span class="el">${esc(t.el)}</span></dt>`
-    + `<dd>${inline(t.text)}<span class="meta">now <code class="val">${esc(t.value)}</code>${t.min !== undefined ? ` · range ${t.min} to ${t.max}` : ''}</span></dd></div>`).join('')
-  + '</dl></details>\n    ';
+    + `<dd>${inline(t.text)}<span class="meta">now <code class="val">${esc(t.value)}</code>${t.min !== undefined ? ` · range ${t.min} to ${t.max}` : ''}</span>`
+    + `${control(f, t)}</dd></div>`).join('')
+  + '</dl><div class="tune-actions"><button type="button" class="reset">Reset</button>'
+  + `<button type="button" class="copy-tuned">Copy ${esc(path.basename(f.file))} with these values</button></div></details>\n    `;
 
 const SCENE_LABEL = '<span class="scene-label">53.54°N 9.98°E</span>';
 // Before/after slider: the subject twice, unfiltered (left of --pos) and filtered (right of it).
