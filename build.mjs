@@ -97,14 +97,21 @@ const codePanel = rel => {
 };
 
 const SCENE_LABEL = '<span class="scene-label">53.54°N 9.98°E</span>';
+// Before/after slider: the subject twice, unfiltered (left of --pos) and filtered (right of it).
+const compare = (plain, filtered) => `<div class="layer before" aria-hidden="true">${plain}</div><div class="layer after">${filtered}</div>`;
+
 function stage(f) {
   const fx = `style="filter:url(#${f.id})"`;
+  const word = esc(f.demoText || f.title);
+  const blobs = '<span class="blob"></span>'.repeat(4);
   switch (f.demo) {
-    case 'scene': return `<div class="stage"><div class="scene fxed" ${fx}></div>${SCENE_LABEL}</div>`;
-    case 'type': return `<div class="stage type-stage${f.demoBg === 'dark' ? ' dark' : ''}"><div class="word fxed" ${fx}>${esc(f.demoText || f.title)}</div></div>`;
-    case 'goo': return `<div class="stage goo-stage"><div class="goo fxed" ${fx}>${'<span class="blob"></span>'.repeat(4)}</div></div>`;
-    case 'glass': return `<div class="stage glass-stage" data-demo="glass" style="--glass-filter:url(#${f.id})"><div class="scene"></div><div class="stripes"></div>`
-      + `<div class="movers"><span class="mover m1"></span><span class="mover m2"></span></div><div class="pane liquid">Liquid</div><span class="support-badge">Checking…</span></div>`;
+    case 'scene': return `<div class="stage" data-compare>${compare('<div class="scene"></div>', `<div class="scene fxed" ${fx}></div>`)}${SCENE_LABEL}</div>`;
+    case 'type': return `<div class="stage type-stage${f.demoBg === 'dark' ? ' dark' : ''}" data-compare>${compare(`<div class="word">${word}</div>`, `<div class="word fxed" ${fx}>${word}</div>`)}</div>`;
+    case 'goo': return `<div class="stage goo-stage" data-compare>${compare(`<div class="goo">${blobs}</div>`, `<div class="goo fxed" ${fx}>${blobs}</div>`)}</div>`;
+    // Glass clips the panes themselves: a clipped wrapper would become the backdrop root and hide the backdrop.
+    case 'glass': return `<div class="stage glass-stage" data-demo="glass" data-compare style="--glass-filter:url(#${f.id})"><div class="scene"></div><div class="stripes"></div>`
+      + `<div class="movers"><span class="mover m1"></span><span class="mover m2"></span></div>`
+      + `<div class="pane before" aria-hidden="true">Liquid</div><div class="pane liquid after">Liquid</div><span class="support-badge">Checking…</span></div>`;
     case 'spot': return `<div class="stage spot-stage" data-demo="spot" data-filter="${f.id}"><div class="spot-surface fxed" ${fx}><span>Move here</span></div></div>`;
     case 'melt': return `<div class="stage melt-stage" data-demo="melt" data-filter="${f.id}"><div class="scene fxed" ${fx}></div>${SCENE_LABEL}</div>`;
   }
