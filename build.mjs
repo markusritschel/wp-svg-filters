@@ -19,7 +19,7 @@ import { fileURLToPath } from 'node:url';
 const here = path.dirname(fileURLToPath(import.meta.url));
 const argv = process.argv.slice(2);
 const opt = name => { const i = argv.indexOf(name); return i >= 0 ? argv[i + 1] : undefined; };
-const mainDir = path.resolve(here, opt('--main') ?? '../main');
+const mainDir = path.resolve(opt('--main') ?? path.join(here, '../main')); // --main: relative to the current directory
 const dist = path.join(here, 'dist');
 
 const CATEGORIES = ['color', 'texture', 'distortion', 'shape', 'light', 'fill', 'glass', 'motion'];
