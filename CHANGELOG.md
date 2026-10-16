@@ -4,10 +4,16 @@ All notable changes to the SVG Filter Kit. Versions follow
 [Semantic Versioning](https://semver.org/); release tags are `vX.Y.Z` and
 must match `SVGF_VERSION` in `svg-filters.php`.
 
-## [Unreleased]
+## [1.3.0] (not yet tagged)
 
 ### Added
 
+- Extension points for plugins: `svgf_extra_sources` (filters from other
+  sources, file IDs win), `svgf_extra_defs` (markup inside the printed
+  `<defs>`) and `svgf_filters()` (title, desc, category, tuning hints and
+  printable markup per filter).
+- `data-svgf-spotlight` / `data-svgf-melt` let elements drive their own copy
+  of the interactive filters independently.
 - Tuning hints (`data-tweak-<attribute>`, optional `[min, max]` range) on
   the primitives worth editing; shown on the demo site and as a *Tunable*
   column in the README filter table.
@@ -25,6 +31,8 @@ must match `SVGF_VERSION` in `svg-filters.php`.
 ### Changed
 
 - README: installation via git subtree, submodule, clone or release zip.
+- `assets/svg-filters.js` listens on `document` (delegated), so spotlight and
+  melt also work on elements added after page load.
 
 ## [1.2.1]
 
