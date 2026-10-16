@@ -170,13 +170,15 @@ const table = ['| File | Class | Category | Description | Notes |', '|---|---|--
   })].join('\n');
 const readmePath = path.join(mainDir, 'README.md');
 const readme = fs.existsSync(readmePath) ? fs.readFileSync(readmePath, 'utf8') : '';
-const TABLE_RE = /(<!-- filters:start -->\n)[\s\S]*?(\n<!-- filters:end -->)/;
-if (TABLE_RE.test(readme)) {
-  const synced = readme.replace(TABLE_RE, (_, a, b) => a + table + b);
+const TABLE_RE = /(<!-- filters:start -->\n)([\s\S]*?)(<!-- filters:end -->)/;
+const current = readme.match(TABLE_RE);
+if (current) {
+  // Ignore cell padding, so a Markdown formatter re-aligning the table doesn't count as a change.
+  const norm = s => s.trim().replace(/ *\| */g, '|').replace(/-{3,}/g, '---');
   if (argv.includes('--readme')) {
-    fs.writeFileSync(readmePath, synced);
+    fs.writeFileSync(readmePath, readme.replace(TABLE_RE, (_, a, b, c) => a + table + '\n' + c));
     console.log('README.md filter table updated');
-  } else if (synced !== readme) {
+  } else if (norm(current[2]) !== norm(table)) {
     console.warn('::warning file=README.md::Filter table is out of sync with the SVG metadata. Run: node build.mjs --readme');
   }
 }
