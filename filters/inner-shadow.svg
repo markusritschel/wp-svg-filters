@@ -1,5 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg">
-  <filter id="fx-inner-shadow">
+  <filter id="fx-inner-shadow"
+          data-category="light" data-support="all" data-cost="low" data-demo="type" data-demo-text="Inset" data-note="Text and icons.">
+    <title>Inner shadow</title>
+    <desc>Inverts the alpha, blurs and offsets it and clips it to the shape, which CSS `box-shadow: inset` cannot do on text.</desc>
     <feComponentTransfer in="SourceAlpha" result="inverse">
       <feFuncA type="table" tableValues="1 0"/>
     </feComponentTransfer>

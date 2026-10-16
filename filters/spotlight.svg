@@ -1,5 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg">
-  <filter id="fx-spotlight" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+  <filter id="fx-spotlight" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"
+          data-category="motion" data-support="all" data-cost="high" data-demo="spot" data-note="Needs `assets/svg-filters.js`. All `.fx-spotlight` elements share one light.">
+    <title>Pointer light</title>
+    <desc>JavaScript moves an `fePointLight` to the pointer over a noise surface.</desc>
     <feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="3" seed="11" result="bump"/>
     <feSpecularLighting in="bump" surfaceScale="3" specularConstant=".9" specularExponent="18" lighting-color="#ffe6b8" result="light">
       <fePointLight id="fx-spot-light" x="150" y="110" z="70"/>

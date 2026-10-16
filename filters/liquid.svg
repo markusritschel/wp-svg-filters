@@ -1,5 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg">
-  <filter id="fx-liquid" x="0" y="0" width="100%" height="100%">
+  <filter id="fx-liquid" x="0" y="0" width="100%" height="100%"
+          data-category="glass" data-support="chromium" data-cost="high" data-demo="glass" data-note="Use it through `.glass .glass--liquid` (backdrop-filter), not as an `.fx-` class.">
+    <title>Refractive glass</title>
+    <desc>Displaces the backdrop through a smooth noise lens so content behind the pane bends; other browsers get a frosted fallback.</desc>
     <feTurbulence type="fractalNoise" baseFrequency=".008 .012" numOctaves="2" seed="3" result="lens"/>
     <feGaussianBlur in="lens" stdDeviation="2" result="smooth"/>
     <feDisplacementMap in="SourceGraphic" in2="smooth" scale="70" xChannelSelector="R" yChannelSelector="G"/>

@@ -1,5 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg">
-  <filter id="fx-bevel" x="-10%" y="-10%" width="120%" height="120%">
+  <filter id="fx-bevel" x="-10%" y="-10%" width="120%" height="120%"
+          data-category="light" data-support="all" data-cost="medium" data-demo="type" data-demo-text="Bevel" data-demo-bg="dark" data-note="Text and icons.">
+    <title>Bevel</title>
+    <desc>Blurred alpha becomes a height map whose specular highlight is added back onto the source as a glossy rim.</desc>
     <feGaussianBlur in="SourceAlpha" stdDeviation="3" result="height"/>
     <feSpecularLighting in="height" surfaceScale="5" specularConstant="1.1" specularExponent="22" lighting-color="#ffffff" result="shine">
       <feDistantLight azimuth="225" elevation="42"/>

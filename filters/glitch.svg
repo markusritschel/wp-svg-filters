@@ -1,5 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg">
-  <filter id="fx-glitch" x="-5%" y="0" width="110%" height="100%" color-interpolation-filters="sRGB">
+  <filter id="fx-glitch" x="-5%" y="0" width="110%" height="100%" color-interpolation-filters="sRGB"
+          data-category="distortion" data-support="all" data-cost="medium" data-demo="scene">
+    <title>RGB glitch</title>
+    <desc>Splits the channels, offsets red and blue, recombines them with `screen` and slices the result with horizontal band noise.</desc>
     <feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="red"/>
     <feOffset in="red" dx="-7" result="redShift"/>
     <feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="green"/>

@@ -1,13 +1,15 @@
 <svg xmlns="http://www.w3.org/2000/svg">
-  <!-- Soft blur: edges fade out. For elements, text, icons, shapes. -->
-  <filter id="fx-blur" x="-10%" y="-10%" width="120%" height="120%">
+  <filter id="fx-blur" x="-10%" y="-10%" width="120%" height="120%"
+          data-category="distortion" data-support="all" data-cost="low" data-demo="type" data-demo-text="Soft">
+    <title>Soft blur</title>
+    <desc>Gaussian blur whose edges fade out, for elements, text, icons and shapes.</desc>
     <feGaussianBlur in="SourceGraphic" stdDeviation="8"/>
   </filter>
 
-  <!-- Solid-edge blur: edges stay crisp and opaque. For rectangular images and
-       backgrounds (pair it with the background-only class variant). Makes transparent areas opaque,
-       so don't use it on text or cut-out shapes. -->
-  <filter id="fx-blur-solid" x="0" y="0" width="100%" height="100%">
+  <filter id="fx-blur-solid" x="0" y="0" width="100%" height="100%"
+          data-category="distortion" data-support="all" data-cost="low" data-demo="scene" data-note="Makes transparent areas opaque: not for text or cut-out shapes. Pair it with the `--bg` class.">
+    <title>Solid-edge blur</title>
+    <desc>Gaussian blur with duplicated edges and forced opacity, so rectangular images and backgrounds keep a crisp border.</desc>
     <feGaussianBlur in="SourceGraphic" stdDeviation="8" edgeMode="duplicate"/>
     <feComponentTransfer>
       <feFuncA type="table" tableValues="1 1"/>

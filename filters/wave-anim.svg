@@ -1,5 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg">
-  <filter id="fx-wave-anim">
+  <filter id="fx-wave-anim"
+          data-category="motion" data-support="all" data-cost="high" data-demo="scene">
+    <title>Flowing water</title>
+    <desc>SMIL animates `baseFrequency`, so the distortion field breathes.</desc>
     <feTurbulence type="fractalNoise" baseFrequency=".01 .04" numOctaves="2" seed="5" result="map">
       <animate attributeName="baseFrequency" dur="9s" values=".01 .04; .016 .07; .01 .04" repeatCount="indefinite"/>
     </feTurbulence>

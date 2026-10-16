@@ -1,5 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg">
-  <filter id="fx-paper" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+  <filter id="fx-paper" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"
+          data-category="texture" data-support="all" data-cost="medium" data-demo="scene">
+    <title>Paper relief</title>
+    <desc>Lights low-frequency noise as a height map and multiplies it over the image like a print on cotton paper.</desc>
     <feTurbulence type="fractalNoise" baseFrequency=".045" numOctaves="5" result="fibres"/>
     <feDiffuseLighting in="fibres" surfaceScale="2" lighting-color="#ffffff" result="relief">
       <feDistantLight azimuth="45" elevation="58"/>

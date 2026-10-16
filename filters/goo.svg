@@ -1,5 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg">
-  <filter id="fx-goo">
+  <filter id="fx-goo"
+          data-category="shape" data-support="all" data-cost="medium" data-demo="goo" data-note="Apply it to the parent of the moving shapes.">
+    <title>Gooey merge</title>
+    <desc>Blurs, then snaps the halo back to a hard edge with a steep alpha curve, so nearby shapes fuse like liquid.</desc>
     <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur"/>
     <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 20 -8" result="goo"/>
     <feComposite in="SourceGraphic" in2="goo" operator="atop"/>

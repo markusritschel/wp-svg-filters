@@ -1,5 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg">
-  <filter id="fx-hue-cycle" color-interpolation-filters="sRGB">
+  <filter id="fx-hue-cycle" color-interpolation-filters="sRGB"
+          data-category="motion" data-support="all" data-cost="low" data-demo="scene">
+    <title>Hue cycle</title>
+    <desc>Rotates the hue through 360° with a single animated attribute, the cheapest animated filter there is.</desc>
     <feColorMatrix type="hueRotate" values="0">
       <animate attributeName="values" from="0" to="360" dur="10s" repeatCount="indefinite"/>
     </feColorMatrix>

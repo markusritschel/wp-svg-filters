@@ -1,5 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg">
-  <filter id="fx-posterize" color-interpolation-filters="sRGB">
+  <filter id="fx-posterize" color-interpolation-filters="sRGB"
+          data-category="color" data-support="all" data-cost="low" data-demo="scene">
+    <title>Posterize</title>
+    <desc>Discrete steps per channel flatten gradients into screen-print bands.</desc>
     <feComponentTransfer>
       <feFuncR type="discrete" tableValues="0 .35 .7 1"/>
       <feFuncG type="discrete" tableValues="0 .35 .7 1"/>
