@@ -1,0 +1,49 @@
+# Builds the demo site from the `docs` branch (template, build script, fonts)
+# and the `main` branch (the module's filters) and deploys it to GitHub Pages.
+# Keep this file identical on `main` and `docs`: a push only triggers the
+# workflow files of the branch it was pushed to.
+name: Pages
+
+on:
+  push:
+    branches: [main, docs]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false # let a running deployment finish
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: main
+          path: main
+      - uses: actions/checkout@v5
+        with:
+          ref: docs
+          path: docs
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+      - run: node docs/build.mjs # reads ../main relative to docs/
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: docs/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
