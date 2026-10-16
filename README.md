@@ -211,7 +211,24 @@ add_filter( 'svgf_bg_variants', '__return_false' );
 
 // No glass CSS / interactive JS
 add_filter( 'svgf_load_assets', '__return_false' );
+
+// More filters from another source (e.g. a plugin's database), collected
+// after the files; an ID that a file already uses is skipped
+add_filter( 'svgf_extra_sources', function ( $sources ) {
+	$sources[] = '<filter id="fx-mine">…</filter>';
+	return $sources;
+} );
+
+// Extra markup inside the printed <defs> (e.g. tuned filter copies); not sanitized
+add_filter( 'svgf_extra_defs', fn( $markup ) => $markup . $my_trusted_filters );
 ```
+
+`svgf_filters()` returns every loaded filter with `title`, `desc`,
+`category`, its tuning hints (`tweaks`: `key`, `attr`, `default`, `hint`)
+and the printable `markup`. Tweak keys are `<primitive>|<attribute>`, where
+`<primitive>` is `#<id>` if the primitive has an `id`, otherwise its tag
+name, with `:2`, `:3`, … from the second occurrence on (`feFuncR|tableValues`,
+`#fx-spot-light|z`).
 
 ## Pitfalls
 
@@ -220,8 +237,10 @@ add_filter( 'svgf_load_assets', '__return_false' );
 - Turbulence, lighting and displacement are expensive on large areas,
   animated ones even more so. Test in Safari.
 - `.fx-spotlight` and `.fx-melt` share one filter per page; all elements
-  using them react together. Duplicate the file with a new ID for
-  independent instances.
+  using them react together. For independent instances, give each element
+  its own copy of the filter (new ID) and name it in
+  `data-svgf-spotlight="<id>"` or `data-svgf-melt="<id>"` instead of the
+  class; the script finds the light / displacement map inside that copy.
 - Animations pause under `prefers-reduced-motion` and in hidden tabs.
 
 ## Development
