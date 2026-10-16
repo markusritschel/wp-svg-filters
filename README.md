@@ -171,9 +171,9 @@ The classes `.fx-myeffect` and `.fx-myeffect--bg` appear automatically. The
 cache invalidates on file changes. One file may contain several filters; IDs
 must be unique across all files (the first one wins).
 
-`<title>`, `<desc>` and the `data-*` attributes are optional for the loader
-(it prints them along, where they are inert). The demo site build requires
-them:
+`<title>`, `<desc>` and the `data-*` attributes are optional for the loader:
+it strips all `data-*` attributes before printing and keeps `<title>` and
+`<desc>`, which are inert. The demo site build requires them:
 
 | Attribute        | Values                                                                        |
 | ---------------- | ----------------------------------------------------------------------------- |

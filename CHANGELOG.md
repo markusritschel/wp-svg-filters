@@ -13,8 +13,9 @@ must match `SVGF_VERSION` in `svg-filters.php`.
   column in the README filter table.
 - Filter metadata inside every `<filter>`: `<title>`, `<desc>` and
   `data-category`, `data-support`, `data-cost`, `data-demo` (optional
-  `data-note`, `data-demo-text`, `data-demo-bg`). The loader ignores them;
-  the demo site and the README filter table are generated from them.
+  `data-note`, `data-demo-text`, `data-demo-bg`). The loader strips the
+  `data-*` attributes before printing (about 6 KB less per page); the demo
+  site and the README filter table are generated from them.
 - Demo site (branch `docs`), built from the filter files and deployed to
   GitHub Pages.
 - Release workflow: tags `v*` get a `svg-filters-vX.Y.Z.zip` attached.
