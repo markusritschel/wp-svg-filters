@@ -1,0 +1,1535 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SVG Filter Kit</title>
+    <meta
+      name="description"
+      content="Live demo of the SVG Filter Kit for WordPress themes: inline SVG filters applied with CSS classes."
+    />
+    <style>
+      /* Template: build.mjs inlines the filters from the module and renders the cards. No filter markup or card texts here. */
+      /* Fonts: self-hosted (SIL OFL 1.1, see fonts/*-LICENSE.txt), no third-party requests. */
+      @font-face {
+        font-family: "Bricolage Grotesque";
+        font-weight: 500;
+        font-display: swap;
+        src: url(fonts/bricolage-grotesque-latin-500-normal.woff2)
+          format("woff2");
+      }
+      @font-face {
+        font-family: "Bricolage Grotesque";
+        font-weight: 700;
+        font-display: swap;
+        src: url(fonts/bricolage-grotesque-latin-700-normal.woff2)
+          format("woff2");
+      }
+      @font-face {
+        font-family: "Bricolage Grotesque";
+        font-weight: 800;
+        font-display: swap;
+        src: url(fonts/bricolage-grotesque-latin-800-normal.woff2)
+          format("woff2");
+      }
+      @font-face {
+        font-family: "Instrument Sans";
+        font-weight: 400;
+        font-display: swap;
+        src: url(fonts/instrument-sans-latin-400-normal.woff2) format("woff2");
+      }
+      @font-face {
+        font-family: "Instrument Sans";
+        font-weight: 500;
+        font-display: swap;
+        src: url(fonts/instrument-sans-latin-500-normal.woff2) format("woff2");
+      }
+      @font-face {
+        font-family: "Instrument Sans";
+        font-weight: 600;
+        font-display: swap;
+        src: url(fonts/instrument-sans-latin-600-normal.woff2) format("woff2");
+      }
+      @font-face {
+        font-family: "JetBrains Mono";
+        font-weight: 400;
+        font-display: swap;
+        src: url(fonts/jetbrains-mono-latin-400-normal.woff2) format("woff2");
+      }
+      @font-face {
+        font-family: "JetBrains Mono";
+        font-weight: 500;
+        font-display: swap;
+        src: url(fonts/jetbrains-mono-latin-500-normal.woff2) format("woff2");
+      }
+
+      /* Layout: specimen catalog — sticky category rail on wide screens, card grid of live filter swatches, reference tables at the end */
+      :root {
+        --bg: #eceef4;
+        --surface: #ffffff;
+        --ink: #151827;
+        --muted: #565d75;
+        --line: #d3d7e3;
+        --accent: #3a40d1;
+        --accent-soft: #e3e4fb;
+        --code-bg: #f5f6fa;
+        --ok: #1d7448;
+        --ok-soft: #dcf1e5;
+        --warn: #9a5600;
+        --warn-soft: #fbecd6;
+        --bad: #b0322a;
+        --bad-soft: #f8dfdc;
+        --f-display:
+          "Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui,
+          sans-serif;
+        --f-body:
+          "Instrument Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
+        --f-mono:
+          "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas,
+          monospace;
+        --r: 10px;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme="light"]) {
+          --bg: #0f111a;
+          --surface: #171a27;
+          --ink: #e6e8f2;
+          --muted: #9aa0b8;
+          --line: #2a2e42;
+          --accent: #8f94ff;
+          --accent-soft: #25285a;
+          --code-bg: #11131e;
+          --ok: #62d29b;
+          --ok-soft: #173a29;
+          --warn: #f0b65c;
+          --warn-soft: #3b2b12;
+          --bad: #ff8a80;
+          --bad-soft: #41201d;
+          color-scheme: dark;
+        }
+      }
+      :root[data-theme="dark"] {
+        --bg: #0f111a;
+        --surface: #171a27;
+        --ink: #e6e8f2;
+        --muted: #9aa0b8;
+        --line: #2a2e42;
+        --accent: #8f94ff;
+        --accent-soft: #25285a;
+        --code-bg: #11131e;
+        --ok: #62d29b;
+        --ok-soft: #173a29;
+        --warn: #f0b65c;
+        --warn-soft: #3b2b12;
+        --bad: #ff8a80;
+        --bad-soft: #41201d;
+        color-scheme: dark;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: var(--f-body);
+        font-size: 15px;
+        line-height: 1.55;
+        padding-left: max(16px, env(safe-area-inset-left, 0px));
+        padding-right: max(16px, env(safe-area-inset-right, 0px));
+        padding-block: 0 64px;
+      }
+      .wrap {
+        max-width: 1240px;
+        margin: 0 auto;
+      }
+      h1,
+      h2,
+      h3 {
+        font-family: var(--f-display);
+        text-wrap: balance;
+        margin: 0;
+      }
+      a {
+        color: var(--accent);
+      }
+      code {
+        font-family: var(--f-mono);
+        font-size: 0.86em;
+        background: var(--code-bg);
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        padding: 0.05em 0.35em;
+      }
+      :focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+      }
+
+      /* Header */
+      header.top {
+        padding-block: 48px 28px;
+        display: grid;
+        gap: 18px;
+      }
+      .eyebrow {
+        font-family: var(--f-mono);
+        font-size: 12px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      h1 {
+        font-size: clamp(40px, 7vw, 76px);
+        font-weight: 800;
+        letter-spacing: -0.025em;
+        line-height: 0.95;
+      }
+      h1 .fe {
+        color: var(--accent);
+      }
+      .lede {
+        max-width: 66ch;
+        color: var(--muted);
+        font-size: 17px;
+        margin: 0;
+      }
+      .toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+      }
+      .toggle {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 7px 14px 7px 8px;
+        cursor: pointer;
+        font: inherit;
+        color: inherit;
+      }
+      .toggle .knob {
+        width: 34px;
+        height: 20px;
+        border-radius: 999px;
+        background: var(--line);
+        position: relative;
+        transition: background 0.2s;
+      }
+      .toggle .knob::after {
+        content: "";
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--surface);
+        transition: transform 0.2s;
+      }
+      .toggle[aria-pressed="true"] .knob {
+        background: var(--accent);
+      }
+      .toggle[aria-pressed="true"] .knob::after {
+        transform: translateX(14px);
+      }
+      .button {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: var(--accent);
+        color: #fff;
+        border-radius: 999px;
+        padding: 7px 16px;
+        font-weight: 600;
+        text-decoration: none;
+      }
+      .legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        font-size: 13px;
+        color: var(--muted);
+        align-items: center;
+      }
+
+      /* Layout */
+      .layout {
+        display: grid;
+        grid-template-columns: 190px minmax(0, 1fr);
+        gap: 36px;
+        align-items: start;
+      }
+      nav.rail {
+        position: sticky;
+        top: calc(env(safe-area-inset-top, 0px) + 20px);
+        display: grid;
+        gap: 2px;
+        font-size: 14px;
+      }
+      nav.rail a {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        color: var(--muted);
+        text-decoration: none;
+        padding: 6px 10px;
+        border-radius: 6px;
+      }
+      nav.rail a:hover {
+        background: var(--surface);
+        color: var(--ink);
+      }
+      nav.rail a span {
+        font-family: var(--f-mono);
+        font-size: 12px;
+        font-variant-numeric: tabular-nums;
+      }
+      @media (max-width: 860px) {
+        .layout {
+          grid-template-columns: minmax(0, 1fr);
+        }
+        nav.rail {
+          position: static;
+          display: flex;
+          flex-wrap: wrap;
+          gap: 6px;
+        }
+        nav.rail a {
+          background: var(--surface);
+          border: 1px solid var(--line);
+          padding: 5px 10px;
+        }
+      }
+
+      section.cat {
+        padding-block: 28px 8px;
+        display: grid;
+        gap: 18px;
+        scroll-margin-top: 16px;
+      }
+      .cat-head {
+        display: grid;
+        gap: 6px;
+        max-width: 72ch;
+      }
+      .cat-head h2 {
+        font-size: clamp(26px, 3.6vw, 34px);
+        font-weight: 700;
+        letter-spacing: -0.015em;
+      }
+      .cat-head p {
+        margin: 0;
+        color: var(--muted);
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(min(100%, 290px), 1fr));
+        gap: 18px;
+      }
+
+      /* Cards */
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: var(--r);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+      }
+      .stage {
+        position: relative;
+        aspect-ratio: 4/3;
+        max-width: 100%;
+        overflow: hidden;
+        background: #20234a;
+        isolation: isolate;
+      }
+      .card-body {
+        padding: 14px 16px 16px;
+        display: grid;
+        gap: 8px;
+        align-content: start;
+        flex: 1;
+        min-width: 0;
+      }
+      .card-body h3 {
+        font-size: 19px;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        align-items: baseline;
+        flex-wrap: wrap;
+      }
+      .card-body h3 code {
+        font-size: 12px;
+        font-weight: 400;
+        background: none;
+        border: none;
+        padding: 0;
+        color: var(--muted);
+      }
+      .card-body p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 14px;
+      }
+      .card-body p.note {
+        color: var(--ink);
+        font-size: 13px;
+        border-left: 3px solid var(--accent-soft);
+        padding-left: 8px;
+      }
+      .prims {
+        font-family: var(--f-mono);
+        font-size: 12px;
+        color: var(--ink);
+        opacity: 0.8;
+        overflow-wrap: anywhere;
+      }
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .chip {
+        font-size: 12px;
+        font-weight: 600;
+        padding: 2px 8px;
+        border-radius: 999px;
+        white-space: nowrap;
+      }
+      .chip.ok {
+        background: var(--ok-soft);
+        color: var(--ok);
+      }
+      .chip.warn {
+        background: var(--warn-soft);
+        color: var(--warn);
+      }
+      .chip.bad {
+        background: var(--bad-soft);
+        color: var(--bad);
+      }
+      .chip.cost {
+        background: var(--accent-soft);
+        color: var(--accent);
+      }
+      .hint {
+        font-size: 12px;
+        font-family: var(--f-mono);
+        color: var(--accent);
+      }
+      details.code {
+        border-top: 1px solid var(--line);
+        margin-top: 6px;
+        padding-top: 8px;
+      }
+      details.code summary {
+        cursor: pointer;
+        font: 500 12px var(--f-mono);
+        color: var(--accent);
+        list-style: none;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      details.code summary::-webkit-details-marker {
+        display: none;
+      }
+      details.code summary::after {
+        content: "+";
+        font-family: var(--f-mono);
+        font-size: 16px;
+      }
+      details.code[open] summary::after {
+        content: "−";
+      }
+      .codebox {
+        position: relative;
+        margin-top: 8px;
+      }
+      pre {
+        margin: 0;
+        background: var(--code-bg);
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 12px;
+        overflow-x: auto;
+        font-family: var(--f-mono);
+        font-size: 12px;
+        line-height: 1.5;
+        tab-size: 2;
+        color: var(--ink);
+      }
+      .copy {
+        position: absolute;
+        top: 6px;
+        right: 6px;
+        font: 600 11px var(--f-body);
+        background: var(--surface);
+        color: var(--ink);
+        border: 1px solid var(--line);
+        border-radius: 5px;
+        padding: 3px 8px;
+        cursor: pointer;
+      }
+
+      /* Demo subjects */
+      .scene {
+        position: absolute;
+        inset: -8%;
+        background:
+          radial-gradient(
+            circle at 68% 36%,
+            #ffe3a1 0 7%,
+            #ffc66e 7.5% 10%,
+            transparent 10.5%
+          ),
+          radial-gradient(
+            ellipse 120% 60% at 20% 100%,
+            #1d4c4a 0 45%,
+            transparent 46%
+          ),
+          radial-gradient(
+            ellipse 90% 55% at 85% 96%,
+            #2f6d5a 0 44%,
+            transparent 45%
+          ),
+          linear-gradient(
+            180deg,
+            #2a2f6e 0%,
+            #7a4c8f 38%,
+            #e9806a 66%,
+            #f6b67d 78%,
+            #3b6f86 79%,
+            #234a5e 100%
+          );
+      }
+      .scene::before {
+        content: "";
+        position: absolute;
+        left: 12%;
+        right: 30%;
+        top: 60%;
+        height: 9%;
+        background: repeating-linear-gradient(
+          90deg,
+          #141a33 0 6%,
+          transparent 6% 8%,
+          #141a33 8% 11%,
+          transparent 11% 15%
+        );
+        clip-path: polygon(
+          0 100%,
+          0 30%,
+          8% 30%,
+          8% 0,
+          12% 0,
+          12% 30%,
+          30% 30%,
+          30% 10%,
+          36% 10%,
+          36% 45%,
+          60% 45%,
+          60% 20%,
+          64% 20%,
+          64% 45%,
+          100% 45%,
+          100% 100%
+        );
+        opacity: 0.85;
+      }
+      .scene::after {
+        content: "";
+        position: absolute;
+        inset: 79% 0 0 0;
+        background: repeating-linear-gradient(
+          180deg,
+          rgba(255, 214, 150, 0.35) 0 2px,
+          transparent 2px 9px
+        );
+        mask: linear-gradient(
+          90deg,
+          transparent 45%,
+          #000 62%,
+          #000 74%,
+          transparent 90%
+        );
+        -webkit-mask: linear-gradient(
+          90deg,
+          transparent 45%,
+          #000 62%,
+          #000 74%,
+          transparent 90%
+        );
+      }
+      .scene-label {
+        position: absolute;
+        left: 12px;
+        bottom: 10px;
+        font: 500 11px var(--f-mono);
+        color: rgba(255, 255, 255, 0.75);
+        letter-spacing: 0.06em;
+        z-index: 2;
+      }
+
+      .type-stage {
+        background: linear-gradient(135deg, #f2efe8, #dfe3ee);
+        display: grid;
+        place-items: center;
+      }
+      .type-stage.dark {
+        background: linear-gradient(135deg, #1b1e3a, #2b2050);
+      }
+      .word {
+        font-family: var(--f-display);
+        font-weight: 800;
+        font-size: clamp(64px, 9vw, 92px);
+        letter-spacing: -0.03em;
+        line-height: 1;
+        color: #3a40d1;
+        padding: 10px 18px;
+      }
+      .type-stage.dark .word {
+        color: #ffb86b;
+      }
+
+      .goo-stage {
+        background: linear-gradient(135deg, #f2efe8, #dfe3ee);
+      }
+      .goo {
+        position: absolute;
+        inset: 0;
+      }
+      .blob {
+        position: absolute;
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: #3a40d1;
+        top: calc(50% - 28px);
+        left: calc(50% - 28px);
+      }
+      .blob:nth-child(1) {
+        animation: orbitA 5s ease-in-out infinite;
+      }
+      .blob:nth-child(2) {
+        animation: orbitB 6s ease-in-out infinite;
+        background: #5a3fd1;
+      }
+      .blob:nth-child(3) {
+        animation: orbitC 4.5s ease-in-out infinite;
+        width: 72px;
+        height: 72px;
+        top: calc(50% - 36px);
+        left: calc(50% - 36px);
+      }
+      .blob:nth-child(4) {
+        animation: orbitD 7s ease-in-out infinite;
+        background: #e0705b;
+        width: 40px;
+        height: 40px;
+        top: calc(50% - 20px);
+        left: calc(50% - 20px);
+      }
+      @keyframes orbitA {
+        0%,
+        100% {
+          transform: translate(-80px, 0);
+        }
+        50% {
+          transform: translate(40px, -30px);
+        }
+      }
+      @keyframes orbitB {
+        0%,
+        100% {
+          transform: translate(90px, 20px);
+        }
+        50% {
+          transform: translate(-20px, 10px);
+        }
+      }
+      @keyframes orbitC {
+        0%,
+        100% {
+          transform: translate(0, 0) scale(1);
+        }
+        50% {
+          transform: translate(10px, 20px) scale(0.8);
+        }
+      }
+      @keyframes orbitD {
+        0%,
+        100% {
+          transform: translate(0, -70px);
+        }
+        50% {
+          transform: translate(-30px, 40px);
+        }
+      }
+
+      .glass-stage .movers {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+      }
+      .mover {
+        position: absolute;
+        border-radius: 50%;
+      }
+      .mover.m1 {
+        width: 46%;
+        aspect-ratio: 1;
+        background: #ff8a5b;
+        left: 8%;
+        top: 12%;
+        animation: drift1 9s ease-in-out infinite;
+      }
+      .mover.m2 {
+        width: 34%;
+        aspect-ratio: 1;
+        background: #5ad1c4;
+        right: 6%;
+        bottom: 6%;
+        animation: drift2 11s ease-in-out infinite;
+      }
+      .mover.m3 {
+        width: 22%;
+        aspect-ratio: 1;
+        background: #ffd36b;
+        right: 22%;
+        top: 8%;
+        animation: drift1 7s ease-in-out infinite reverse;
+      }
+      .stripes {
+        position: absolute;
+        inset: 0;
+        background: repeating-linear-gradient(
+          115deg,
+          transparent 0 18px,
+          rgba(255, 255, 255, 0.18) 18px 22px
+        );
+        z-index: 1;
+      }
+      @keyframes drift1 {
+        0%,
+        100% {
+          transform: translate(0, 0);
+        }
+        50% {
+          transform: translate(30%, 18%);
+        }
+      }
+      @keyframes drift2 {
+        0%,
+        100% {
+          transform: translate(0, 0);
+        }
+        50% {
+          transform: translate(-40%, -25%);
+        }
+      }
+      .pane {
+        position: absolute;
+        inset: 18% 16%;
+        z-index: 2;
+        border-radius: 18px;
+        display: grid;
+        place-items: center;
+        font: 700 18px var(--f-display);
+        color: #fff;
+        text-shadow: 0 1px 6px rgba(0, 0, 0, 0.35);
+        border: 1px solid rgba(255, 255, 255, 0.45);
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.6),
+          inset 0 -10px 30px rgba(255, 255, 255, 0.08),
+          0 10px 30px rgba(0, 0, 0, 0.25);
+        background: linear-gradient(
+          160deg,
+          rgba(255, 255, 255, 0.22),
+          rgba(255, 255, 255, 0.04) 55%
+        );
+      }
+      .pane.frost {
+        -webkit-backdrop-filter: blur(14px) saturate(1.5);
+        backdrop-filter: blur(14px) saturate(1.5);
+      }
+      .pane.liquid {
+        -webkit-backdrop-filter: blur(6px) saturate(1.4);
+        backdrop-filter: blur(6px) saturate(1.4);
+      }
+      .liquid-ok .pane.liquid {
+        backdrop-filter: var(--glass-filter) saturate(1.4);
+      }
+      .support-badge {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        z-index: 3;
+        font: 600 11px var(--f-body);
+        padding: 3px 8px;
+        border-radius: 999px;
+        background: rgba(0, 0, 0, 0.55);
+        color: #fff;
+      }
+
+      .spot-stage {
+        background: #1a1d3d;
+        cursor: crosshair;
+        touch-action: none;
+      }
+      .spot-surface {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, #2c3170, #4b2f72);
+        display: grid;
+        place-items: center;
+      }
+      .spot-surface span {
+        font: 800 46px var(--f-display);
+        color: #c9cdfc;
+        letter-spacing: -0.02em;
+      }
+      .melt-stage {
+        cursor: pointer;
+      }
+
+      /* Compare mode removes every filter */
+      .compare .fxed {
+        filter: none !important;
+      }
+      .compare .pane.frost,
+      .compare .pane.liquid {
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+      }
+
+      /* Reference */
+      .ref {
+        padding-block: 36px 0;
+        display: grid;
+        gap: 22px;
+        scroll-margin-top: 16px;
+      }
+      .ref h2 {
+        font-size: clamp(26px, 3.6vw, 34px);
+        font-weight: 700;
+      }
+      .tablewrap {
+        overflow-x: auto;
+        border: 1px solid var(--line);
+        border-radius: var(--r);
+        background: var(--surface);
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        min-width: 620px;
+        font-size: 14px;
+      }
+      th,
+      td {
+        text-align: left;
+        padding: 10px 14px;
+        border-bottom: 1px solid var(--line);
+        vertical-align: top;
+      }
+      th {
+        font-size: 12px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--muted);
+        font-weight: 600;
+      }
+      tr:last-child td {
+        border-bottom: none;
+      }
+      td.c {
+        text-align: center;
+        white-space: nowrap;
+      }
+      .y {
+        color: var(--ok);
+        font-weight: 700;
+      }
+      .n {
+        color: var(--bad);
+        font-weight: 700;
+      }
+      .p {
+        color: var(--warn);
+        font-weight: 700;
+      }
+      .two {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+        gap: 18px;
+      }
+      .panel {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: var(--r);
+        padding: 18px 20px;
+        display: grid;
+        gap: 10px;
+        min-width: 0;
+      }
+      .panel h3 {
+        font-size: 19px;
+      }
+      .panel p {
+        margin: 0;
+        color: var(--muted);
+      }
+      .panel ul {
+        margin: 0;
+        padding-left: 18px;
+        display: grid;
+        gap: 6px;
+        color: var(--muted);
+      }
+      .panel ul strong {
+        color: var(--ink);
+      }
+      footer {
+        margin-top: 40px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation: none !important;
+          transition: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Filter definitions from the module's filters/*.svg, printed like the WordPress loader does -->
+    <!-- build:defs -->
+
+    <div class="wrap">
+      <header class="top">
+        <div class="eyebrow">
+          SVG Filter Kit
+          <!-- build:version -->
+          · WordPress child-theme module
+        </div>
+        <h1>SVG Filter <span class="fe">Kit</span></h1>
+        <p class="lede">
+          Every swatch below is live: the
+          <!-- build:total -->
+          filters of the kit, inlined in a hidden SVG exactly as the WordPress
+          loader prints them, and applied with <code>filter: url(#id)</code> to
+          ordinary HTML. Open the file name on any card to see and copy the real
+          file from the kit's <code>filters/</code> folder.
+        </p>
+        <div class="toolbar">
+          <a
+            class="button"
+            href="https://github.com/markusritschel/wp-svg-filters"
+            >Get the kit on GitHub</a
+          >
+          <button
+            class="toggle"
+            id="compare"
+            type="button"
+            aria-pressed="false"
+          >
+            <span class="knob"></span>Show originals (filters off)
+          </button>
+          <div class="legend">
+            <span class="chip ok">All browsers</span>
+            <span class="chip warn">Caveats</span>
+            <span class="chip bad">Chromium only</span>
+            <span class="chip cost">Cost</span>
+          </div>
+        </div>
+      </header>
+
+      <div class="layout">
+        <nav class="rail" aria-label="Categories">
+          <a href="#color"
+            >Color <span><!-- build:count:color --></span></a
+          >
+          <a href="#texture"
+            >Texture <span><!-- build:count:texture --></span></a
+          >
+          <a href="#distortion"
+            >Blur &amp; distortion
+            <span><!-- build:count:distortion --></span></a
+          >
+          <a href="#shape"
+            >Shape <span><!-- build:count:shape --></span></a
+          >
+          <a href="#light"
+            >Light &amp; depth <span><!-- build:count:light --></span></a
+          >
+          <a href="#fill"
+            >Fill &amp; compositing <span><!-- build:count:fill --></span></a
+          >
+          <a href="#glass"
+            >Glass <span><!-- build:count:glass --></span></a
+          >
+          <a href="#motion"
+            >Motion <span><!-- build:count:motion --></span></a
+          >
+          <a href="#usage">Using the kit</a>
+          <a href="#divi">Divi</a>
+          <a href="#reference">Support &amp; pitfalls</a>
+        </nav>
+
+        <main>
+          <section class="cat" id="color">
+            <div class="cat-head">
+              <h2>Color</h2>
+              <p>
+                Remap channels with matrices and transfer curves. Cheap,
+                predictable, and the safest place to start. Always set
+                <code>color-interpolation-filters="sRGB"</code> so your hex
+                values come out as designed.
+              </p>
+            </div>
+            <div class="grid">
+              <!-- build:cards:color -->
+            </div>
+          </section>
+
+          <section class="cat" id="texture">
+            <div class="cat-head">
+              <h2>Texture</h2>
+              <p>
+                <code>feTurbulence</code> generates Perlin noise on the fly, so
+                textures cost no image requests. Blend it over the content and
+                clip it back to the source alpha.
+              </p>
+            </div>
+            <div class="grid">
+              <!-- build:cards:texture -->
+            </div>
+          </section>
+
+          <section class="cat" id="distortion">
+            <div class="cat-head">
+              <h2>Blur &amp; distortion</h2>
+              <p>
+                <code>feGaussianBlur</code> spreads each pixel over its
+                neighbours; <code>feDisplacementMap</code> moves each pixel by
+                the value of a map, usually noise, with <code>scale</code> as
+                the strength in pixels. Both affect edges: blurred and displaced
+                borders can go transparent, so the kit enlarges the
+                <code>--bg</code> copy for these filters.
+              </p>
+            </div>
+            <div class="grid">
+              <!-- build:cards:distortion -->
+            </div>
+          </section>
+
+          <section class="cat" id="shape">
+            <div class="cat-head">
+              <h2>Shape</h2>
+              <p>
+                Work on the alpha channel to change silhouettes: merge, thicken,
+                thin or outline.
+              </p>
+            </div>
+            <div class="grid">
+              <!-- build:cards:shape -->
+            </div>
+          </section>
+
+          <section class="cat" id="light">
+            <div class="cat-head">
+              <h2>Light &amp; depth</h2>
+              <p>
+                Lighting primitives treat alpha or noise as a surface and shine
+                a distant, point or spot light on it. This is where bevels,
+                embossing and metallic sheen come from.
+              </p>
+            </div>
+            <div class="grid">
+              <!-- build:cards:light -->
+            </div>
+          </section>
+
+          <section class="cat" id="fill">
+            <div class="cat-head">
+              <h2>Fill &amp; compositing</h2>
+              <p>
+                <code>feComposite</code> with <code>in</code>, <code>out</code>,
+                <code>atop</code> or <code>arithmetic</code> combines layers
+                like Photoshop masks. Here a generated texture is masked by the
+                text shape.
+              </p>
+            </div>
+            <div class="grid">
+              <!-- build:cards:fill -->
+            </div>
+          </section>
+
+          <section class="cat" id="glass">
+            <div class="cat-head">
+              <h2>Glass</h2>
+              <p>
+                <code>filter</code> only touches an element's own pixels. Glass
+                has to process what lies <em>behind</em> it, so it uses
+                <code>backdrop-filter</code>. Plain CSS functions work
+                everywhere; an SVG filter reference in
+                <code>backdrop-filter</code> renders only in Chromium. Both
+                classes come with the kit's <code>assets/svg-filters.css</code>.
+              </p>
+            </div>
+            <div class="grid">
+              <article class="card" id="glass-frost-card">
+                <div class="stage glass-stage">
+                  <div class="scene"></div>
+                  <div class="movers">
+                    <span class="mover m1"></span><span class="mover m2"></span
+                    ><span class="mover m3"></span>
+                  </div>
+                  <div class="pane frost">Frosted</div>
+                </div>
+                <div class="card-body">
+                  <h3>Frosted glass <code>.glass</code></h3>
+                  <p>
+                    Blur plus saturation boost on the backdrop, a translucent
+                    gradient fill and a bright inner top edge. Plain CSS, no SVG
+                    needed.
+                  </p>
+                  <div class="prims">backdrop-filter: blur() saturate()</div>
+                  <div class="chips">
+                    <span class="chip ok">All browsers</span
+                    ><span class="chip warn">Older Safari: -webkit-</span
+                    ><span class="chip cost">Cost: medium</span>
+                  </div>
+                  <!-- build:file:assets/svg-filters.css -->
+                </div>
+              </article>
+              <!-- build:cards:glass -->
+            </div>
+          </section>
+
+          <section class="cat" id="motion">
+            <div class="cat-head">
+              <h2>Motion</h2>
+              <p>
+                Primitive attributes aren't CSS properties, so CSS transitions
+                can't reach them. Animate with SMIL
+                <code>&lt;animate&gt;</code> inside the filter (markup only,
+                synchronized for every element using it) or set attributes from
+                JavaScript for hover and pointer effects; the kit's
+                <code>assets/svg-filters.js</code> does the latter and pauses
+                all animation under reduced motion and in hidden tabs. Animated
+                filters re-render every frame.
+              </p>
+            </div>
+            <div class="grid">
+              <!-- build:cards:motion -->
+            </div>
+          </section>
+
+          <section class="ref" id="usage">
+            <h2>Using the kit</h2>
+            <div class="two">
+              <div class="panel">
+                <h3>Install</h3>
+                <p>
+                  Add the module as <code>svg-filters/</code> in your child
+                  theme (git subtree, submodule, clone or release zip; see the
+                  <a
+                    href="https://github.com/markusritschel/wp-svg-filters#installation"
+                    >README</a
+                  >), then load it from <code>functions.php</code>:
+                </p>
+                <pre>
+require_once get_stylesheet_directory() . '/svg-filters/svg-filters.php';</pre>
+              </div>
+              <div class="panel">
+                <h3>Classes</h3>
+                <ul>
+                  <li>
+                    Every <code>&lt;filter id="fx-…"&gt;</code> in
+                    <code>filters/</code> becomes two classes:
+                    <code>.fx-name</code> filters the whole element,
+                    <code>.fx-name--bg</code> only its background.
+                  </li>
+                  <li>
+                    The loader prints all filters once before
+                    <code>&lt;/body&gt;</code> (<code>wp_footer</code>);
+                    <code>url(#id)</code> resolves document-wide.
+                  </li>
+                  <li>
+                    To add a filter, save a copied file (or your own) as
+                    <code>filters/name.svg</code>. <code>&lt;title&gt;</code>,
+                    <code>&lt;desc&gt;</code> and the
+                    <code>data-*</code> attributes are optional; they only feed
+                    this page.
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </section>
+
+          <section class="ref" id="divi">
+            <h2>Divi</h2>
+            <div class="two">
+              <div class="panel">
+                <h3>Where the classes go</h3>
+                <ul>
+                  <li>
+                    <strong>CSS class.</strong> Add it under
+                    <em>Advanced → CSS ID &amp; Classes → CSS Class</em> of a
+                    section, row or module.
+                  </li>
+                  <li>
+                    <strong>Divi's own Filters setting</strong> (<em
+                      >Design → Filters</em
+                    >) writes its own <code>filter:</code> on the module and
+                    overrides the class. Leave it at defaults, or put the class
+                    on a child element.
+                  </li>
+                  <li>
+                    <strong
+                      ><code>--bg</code> uses <code>::before</code>.</strong
+                    >
+                    On normal backgrounds the kit places a filtered copy of the
+                    background in <code>::before</code>, behind the content.
+                    Don't use it on elements where Divi or your CSS already
+                    styles <code>::before</code>.
+                  </li>
+                </ul>
+              </div>
+              <div class="panel">
+                <h3>Parallax backgrounds</h3>
+                <ul>
+                  <li>
+                    <strong>True Parallax (JS)</strong> works with
+                    <code>--bg</code>: the filter goes on the span that holds
+                    the image, <code>.et_parallax_bg</code> in Divi 4 and
+                    <code>.et-pb-parallax-background</code> in Divi 5.
+                  </li>
+                  <li>
+                    <strong>CSS Parallax</strong> (<code
+                      >background-attachment: fixed</code
+                    >) is not supported: a filter on that element can make
+                    Chrome drop the fixed behaviour.
+                  </li>
+                  <li>
+                    <strong>Defs in the footer.</strong> Divi fires
+                    <code>wp_body_open</code> inside discarded output buffers,
+                    so the kit prints its filters in
+                    <code>wp_footer</code> only.
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </section>
+
+          <section class="ref" id="reference">
+            <h2>Support &amp; pitfalls</h2>
+            <div class="tablewrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Technique</th>
+                    <th>Chromium</th>
+                    <th>Firefox</th>
+                    <th>Safari</th>
+                    <th>Notes</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><code>filter: url(#id)</code> on HTML, inline defs</td>
+                    <td class="c y">Yes</td>
+                    <td class="c y">Yes</td>
+                    <td class="c y">Yes</td>
+                    <td>
+                      The baseline for everything on this page. Safari is
+                      noticeably slower on large filtered areas.
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <code>filter: url(file.svg#id)</code>, external file
+                    </td>
+                    <td class="c n">No</td>
+                    <td class="c y">Yes</td>
+                    <td class="c p">Unreliable</td>
+                    <td>Inline the defs instead, as the loader does.</td>
+                  </tr>
+                  <tr>
+                    <td>SMIL <code>&lt;animate&gt;</code> inside filters</td>
+                    <td class="c y">Yes</td>
+                    <td class="c y">Yes</td>
+                    <td class="c y">Yes</td>
+                    <td>
+                      All elements sharing the filter animate in sync. Pause
+                      with <code>svg.pauseAnimations()</code>.
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>JS-set primitive attributes</td>
+                    <td class="c y">Yes</td>
+                    <td class="c y">Yes</td>
+                    <td class="c y">Yes</td>
+                    <td>
+                      Use one filter ID per independently animated element.
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      CSS transition between two <code>url()</code> filters
+                    </td>
+                    <td class="c n">No</td>
+                    <td class="c n">No</td>
+                    <td class="c n">No</td>
+                    <td>
+                      Not interpolated; it switches instantly. Animate the
+                      primitives instead.
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><code>backdrop-filter: blur()</code> etc.</td>
+                    <td class="c y">Yes</td>
+                    <td class="c y">Yes</td>
+                    <td class="c y">Yes</td>
+                    <td>
+                      Add <code>-webkit-backdrop-filter</code> for older Safari.
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><code>backdrop-filter: url(#id)</code></td>
+                    <td class="c y">Yes</td>
+                    <td class="c n">No</td>
+                    <td class="c n">No</td>
+                    <td>Always pair with a plain-blur fallback.</td>
+                  </tr>
+                  <tr>
+                    <td>Hiding the defs SVG with <code>display:none</code></td>
+                    <td class="c p">Works</td>
+                    <td class="c n">Breaks</td>
+                    <td class="c n">Breaks</td>
+                    <td>
+                      Use <code>width="0" height="0"</code> plus
+                      <code>position:absolute</code>.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="two">
+              <div class="panel">
+                <h3>Getting it right</h3>
+                <ul>
+                  <li>
+                    <strong>sRGB interpolation.</strong> Without
+                    <code>color-interpolation-filters="sRGB"</code>, colors are
+                    computed in linearRGB and look washed out.
+                  </li>
+                  <li>
+                    <strong>Filter region.</strong> The default region is the
+                    element plus 10%. Widen <code>x/y/width/height</code> for
+                    outlines, glows and offsets, or they get clipped.
+                  </li>
+                  <li>
+                    <strong>Unique IDs.</strong> IDs are global per page. Prefix
+                    them (<code>fx-</code>) so they never collide with plugins;
+                    across the kit's files the first one wins.
+                  </li>
+                  <li>
+                    <strong>Units.</strong> Pixel values
+                    (<code>stdDeviation</code>, <code>scale</code>,
+                    <code>radius</code>) don't scale with the element. Tune them
+                    at real sizes.
+                  </li>
+                </ul>
+              </div>
+              <div class="panel">
+                <h3>Keeping it fast</h3>
+                <ul>
+                  <li>
+                    <strong>Area is the cost.</strong> Turbulence, lighting and
+                    displacement scale with pixel count. Use them on cards and
+                    images, not full-viewport sections.
+                  </li>
+                  <li>
+                    <strong>Animation multiplies it.</strong> Every animated
+                    frame re-rasterizes the whole filter chain. Keep animated
+                    filters few and small.
+                  </li>
+                  <li>
+                    <strong>Pause off-screen.</strong> An
+                    <code>IntersectionObserver</code> can toggle the class or
+                    call <code>pauseAnimations()</code>.
+                  </li>
+                  <li>
+                    <strong>Reduced motion.</strong> Under
+                    <code>prefers-reduced-motion: reduce</code>, pause SMIL and
+                    skip JS-driven effects. The kit and this page do both.
+                  </li>
+                  <li>
+                    <strong>Test Safari.</strong> It is the slowest renderer for
+                    SVG filters on HTML content, especially on iPhones.
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <footer>
+              All demos are drawn with CSS gradients and live filters; no
+              images, fonts or scripts are loaded from third parties. SVG Filter
+              Kit
+              <!-- build:version -->.
+            </footer>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        const reduce = window.matchMedia(
+          "(prefers-reduced-motion: reduce)",
+        ).matches;
+        const defs = document.getElementById("svgf-defs");
+        if (reduce && defs && defs.pauseAnimations) defs.pauseAnimations();
+
+        // Copy buttons: copy the file content shown in the panel
+        document.querySelectorAll(".codebox").forEach((box) => {
+          const btn = box.querySelector(".copy"),
+            pre = box.querySelector("pre");
+          btn.addEventListener("click", () => {
+            const done = () => {
+              btn.textContent = "Copied";
+              setTimeout(() => (btn.textContent = "Copy"), 1400);
+            };
+            const fallback = () => {
+              const range = document.createRange();
+              range.selectNodeContents(pre);
+              const sel = window.getSelection();
+              sel.removeAllRanges();
+              sel.addRange(range);
+              btn.textContent = "Selected — press Ctrl+C";
+            };
+            try {
+              navigator.clipboard
+                .writeText(pre.textContent)
+                .then(done, fallback);
+            } catch (e) {
+              fallback();
+            }
+          });
+        });
+
+        // Compare toggle
+        const cmp = document.getElementById("compare");
+        cmp.addEventListener("click", () => {
+          const on = cmp.getAttribute("aria-pressed") !== "true";
+          cmp.setAttribute("aria-pressed", String(on));
+          document.documentElement.classList.toggle("compare", on);
+        });
+
+        // Refractive glass: SVG references in backdrop-filter render in Chromium only
+        const brands =
+          (navigator.userAgentData && navigator.userAgentData.brands) || [];
+        const chromium = brands.some((b) => /Chromium/i.test(b.brand));
+        document.querySelectorAll('.stage[data-demo="glass"]').forEach((stage) => {
+          stage.classList.toggle("liquid-ok", chromium);
+          stage.querySelector(".support-badge").textContent = chromium
+            ? "Refracting in your browser"
+            : "Fallback: blur only";
+        });
+
+        const primitive = (stage, sel) =>
+          document.querySelector(
+            "#" + CSS.escape(stage.dataset.filter) + " " + sel,
+          );
+
+        // Pointer light: follows the pointer, orbits on its own when idle
+        document.querySelectorAll('.stage[data-demo="spot"]').forEach((spot) => {
+          const light = primitive(spot, "fePointLight");
+          if (!light) return;
+          let pointerActive = false,
+            visible = true;
+          const t0 = performance.now();
+          const setLight = (x, y) => {
+            light.setAttribute("x", x.toFixed(1));
+            light.setAttribute("y", y.toFixed(1));
+          };
+          spot.addEventListener("pointermove", (e) => {
+            pointerActive = true;
+            const r = spot.getBoundingClientRect();
+            setLight(e.clientX - r.left, e.clientY - r.top);
+          });
+          spot.addEventListener("pointerleave", () => {
+            pointerActive = false;
+          });
+          const r0 = spot.getBoundingClientRect();
+          setLight(r0.width * 0.35, r0.height * 0.4);
+          if (reduce) return;
+          if ("IntersectionObserver" in window)
+            new IntersectionObserver((es) => {
+              visible = es[0].isIntersecting;
+            }).observe(spot);
+          (function orbit(now) {
+            if (!pointerActive && visible) {
+              const r = spot.getBoundingClientRect(),
+                a = (now - t0) / 1600;
+              setLight(
+                r.width * (0.5 + 0.32 * Math.cos(a)),
+                r.height * (0.5 + 0.28 * Math.sin(a * 1.3)),
+              );
+            }
+            requestAnimationFrame(orbit);
+          })(t0);
+        });
+
+        // Hover melt: tween the displacement scale
+        document.querySelectorAll('.stage[data-demo="melt"]').forEach((melt) => {
+          const map = primitive(melt, "feDisplacementMap");
+          if (!map) return;
+          let cur = 0,
+            target = 0,
+            raf = 0;
+          const step = () => {
+            cur += (target - cur) * 0.12;
+            if (Math.abs(target - cur) < 0.2) cur = target;
+            map.setAttribute("scale", cur.toFixed(1));
+            if (cur !== target) raf = requestAnimationFrame(step);
+          };
+          const go = (v) => {
+            target = v;
+            cancelAnimationFrame(raf);
+            if (reduce) {
+              cur = v;
+              map.setAttribute("scale", v);
+            } else step();
+          };
+          melt.addEventListener("pointerenter", (e) => {
+            if (e.pointerType === "mouse") go(45);
+          });
+          melt.addEventListener("pointerleave", (e) => {
+            if (e.pointerType === "mouse") go(0);
+          });
+          melt.addEventListener("pointerdown", (e) => {
+            if (e.pointerType !== "mouse") go(target ? 0 : 45);
+          });
+        });
+      })();
+    </script>
+  </body>
+</html>
