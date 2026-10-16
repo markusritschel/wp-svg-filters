@@ -58,9 +58,10 @@ function svgf_collect() {
 	$files = glob( trailingslashit( $dir ) . '*.svg' ) ?: array();
 	sort( $files );
 
+	// 'markup2': bump when the extraction below changes, so cached markup from older code is rebuilt.
 	$signature = md5( $dir . '|' . implode( '|', array_map( static function ( $f ) {
 		return basename( $f ) . ':' . filemtime( $f );
-	}, $files ) ) . '|' . SVGF_VERSION );
+	}, $files ) ) . '|' . SVGF_VERSION . '|markup2' );
 
 	$stored = get_transient( 'svgf_cache' );
 	if ( is_array( $stored ) && ( $stored['sig'] ?? '' ) === $signature ) {
@@ -75,6 +76,9 @@ function svgf_collect() {
 		// Basic hardening: theme files are trusted, but never pass on scripts or event handlers.
 		$svg = preg_replace( '#<script\b.*?</script>#is', '', $svg );
 		$svg = preg_replace( '#\son[a-z]+\s*=\s*("[^"]*"|\'[^\']*\')#i', '', $svg );
+
+		// data-* attributes are metadata for the demo site and README, not needed on the page.
+		$svg = preg_replace( '#\sdata-[\w.:-]+\s*=\s*("[^"]*"|\'[^\']*\')#', '', $svg );
 
 		if ( ! preg_match_all( '#<filter\b[^>]*\bid="([^"]+)"[^>]*>.*?</filter>#s', $svg, $m ) ) {
 			continue;

@@ -73,7 +73,13 @@ do_action( 'wp_footer' );
 check( '' === ob_get_clean(), 'defs not printed twice' );
 
 $defs = new DOMDocument();
-check( $defs->loadXML( trim( $footer ) ), 'printed defs are well-formed XML (title/desc/data-* included)' );
+check( $defs->loadXML( trim( $footer ) ), 'printed defs are well-formed XML' );
+
+// Metadata attributes (data-*) only feed the demo site; they must not reach the page.
+check( ! preg_match( '/\sdata-[\w.:-]+\s*=/', $footer ), 'no data-* attributes in the printed defs' );
+check( false !== strpos( $footer, 'stdDeviation="8"' ) && false !== strpos( $footer, 'id="fx-melt-map"' ),
+	'filter attributes and primitive IDs kept' );
+check( substr_count( $footer, '<title>' ) === count( $expected ), '<title> kept for every filter' );
 
 // Generated CSS.
 do_action( 'wp_enqueue_scripts' );
