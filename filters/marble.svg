@@ -3,7 +3,7 @@
           data-category="fill" data-support="all" data-cost="medium" data-demo="type" data-demo-text="Marble" data-note="Text and icons.">
     <title>Texture fill</title>
     <desc>Stretched noise, recolored with a matrix and clipped to the source alpha, so text stays real, selectable text.</desc>
-    <feTurbulence type="fractalNoise" baseFrequency=".012 .07" numOctaves="4" seed="7" result="veins"/>
+    <feTurbulence type="fractalNoise" baseFrequency=".012 .07" numOctaves="4" seed="7" result="veins" data-tweak-baseFrequency="Vein frequency, horizontal and vertical; a higher second value gives more stripes" data-tweak-seed="[0, 100] Pattern variant"/>
     <feColorMatrix in="veins" type="matrix" values="2.2 0 0 0 -.45  0 1.1 0 0 -.1  0 0 2.6 0 -.25  0 0 0 0 1" result="color"/>
     <feComposite in="color" in2="SourceAlpha" operator="in"/>
   </filter>

@@ -6,9 +6,9 @@
     <feComponentTransfer in="SourceAlpha" result="inverse">
       <feFuncA type="table" tableValues="1 0"/>
     </feComponentTransfer>
-    <feGaussianBlur in="inverse" stdDeviation="4"/>
-    <feOffset dx="4" dy="6" result="offsetBlur"/>
-    <feFlood flood-color="#000000" flood-opacity=".65"/>
+    <feGaussianBlur in="inverse" stdDeviation="4" data-tweak-stdDeviation="[0, 15] Shadow softness in px"/>
+    <feOffset dx="4" dy="6" result="offsetBlur" data-tweak-dx="[-20, 20] Horizontal shadow offset in px" data-tweak-dy="[-20, 20] Vertical shadow offset in px"/>
+    <feFlood flood-color="#000000" flood-opacity=".65" data-tweak-flood-color="Shadow color" data-tweak-flood-opacity="[0, 1] Shadow opacity"/>
     <feComposite in2="offsetBlur" operator="in"/>
     <feComposite in2="SourceAlpha" operator="in" result="shadow"/>
     <feMerge>

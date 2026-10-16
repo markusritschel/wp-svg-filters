@@ -3,8 +3,8 @@
           data-category="texture" data-support="all" data-cost="medium" data-demo="scene">
     <title>Paper relief</title>
     <desc>Lights low-frequency noise as a height map and multiplies it over the image like a print on cotton paper.</desc>
-    <feTurbulence type="fractalNoise" baseFrequency=".045" numOctaves="5" result="fibres"/>
-    <feDiffuseLighting in="fibres" surfaceScale="2" lighting-color="#ffffff" result="relief">
+    <feTurbulence type="fractalNoise" baseFrequency=".045" numOctaves="5" result="fibres" data-tweak-baseFrequency="[0.005, 0.2] Fibre size; lower is coarser"/>
+    <feDiffuseLighting in="fibres" surfaceScale="2" lighting-color="#ffffff" result="relief" data-tweak-surfaceScale="[0, 10] Relief depth">
       <feDistantLight azimuth="45" elevation="58"/>
     </feDiffuseLighting>
     <feBlend in="SourceGraphic" in2="relief" mode="multiply" result="printed"/>

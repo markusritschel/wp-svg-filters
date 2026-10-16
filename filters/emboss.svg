@@ -3,6 +3,6 @@
           data-category="light" data-support="all" data-cost="medium" data-demo="scene">
     <title>Emboss</title>
     <desc>A 3×3 convolution kernel; swap the kernel for sharpen, edge detect or box blur.</desc>
-    <feConvolveMatrix order="3" kernelMatrix="-2 -1 0  -1 1 1  0 1 2" preserveAlpha="true"/>
+    <feConvolveMatrix order="3" kernelMatrix="-2 -1 0  -1 1 1  0 1 2" preserveAlpha="true" data-tweak-kernelMatrix="3×3 kernel, row by row; 0 -1 0 -1 5 -1 0 -1 0 sharpens, -1 -1 -1 -1 8 -1 -1 -1 -1 finds edges"/>
   </filter>
 </svg>

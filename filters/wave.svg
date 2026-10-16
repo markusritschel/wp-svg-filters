@@ -3,7 +3,7 @@
           data-category="distortion" data-support="all" data-cost="medium" data-demo="scene">
     <title>Water wave</title>
     <desc>Anisotropic noise (low x, higher y frequency) displaces the image into horizontal ripples like a reflection.</desc>
-    <feTurbulence type="fractalNoise" baseFrequency=".008 .03" numOctaves="2" seed="4" result="map"/>
-    <feDisplacementMap in="SourceGraphic" in2="map" scale="28" xChannelSelector="R" yChannelSelector="G"/>
+    <feTurbulence type="fractalNoise" baseFrequency=".008 .03" numOctaves="2" seed="4" result="map" data-tweak-baseFrequency="Ripple frequency, horizontal and vertical; a higher second value gives tighter ripples"/>
+    <feDisplacementMap in="SourceGraphic" in2="map" scale="28" xChannelSelector="R" yChannelSelector="G" data-tweak-scale="[0, 100] Distortion strength in px"/>
   </filter>
 </svg>

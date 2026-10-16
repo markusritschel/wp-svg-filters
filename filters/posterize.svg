@@ -4,9 +4,9 @@
     <title>Posterize</title>
     <desc>Discrete steps per channel flatten gradients into screen-print bands.</desc>
     <feComponentTransfer>
-      <feFuncR type="discrete" tableValues="0 .35 .7 1"/>
-      <feFuncG type="discrete" tableValues="0 .35 .7 1"/>
-      <feFuncB type="discrete" tableValues="0 .35 .7 1"/>
+      <feFuncR type="discrete" tableValues="0 .35 .7 1" data-tweak-tableValues="Red output levels, 0–1; more values give more bands"/>
+      <feFuncG type="discrete" tableValues="0 .35 .7 1" data-tweak-tableValues="Green output levels, 0–1"/>
+      <feFuncB type="discrete" tableValues="0 .35 .7 1" data-tweak-tableValues="Blue output levels, 0–1"/>
     </feComponentTransfer>
   </filter>
 </svg>

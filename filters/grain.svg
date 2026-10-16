@@ -3,10 +3,10 @@
           data-category="texture" data-support="all" data-cost="medium" data-demo="scene">
     <title>Film grain</title>
     <desc>Blends high-frequency mono noise with `overlay` and mixes it back at about half strength.</desc>
-    <feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="3" stitchTiles="stitch" result="noise"/>
+    <feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="3" stitchTiles="stitch" result="noise" data-tweak-baseFrequency="[0.2, 2] Grain size; higher is finer"/>
     <feColorMatrix in="noise" type="matrix" values=".33 .33 .33 0 0  .33 .33 .33 0 0  .33 .33 .33 0 0  0 0 0 0 1" result="mono"/>
     <feBlend in="SourceGraphic" in2="mono" mode="overlay" result="blend"/>
-    <feComposite in="blend" in2="SourceGraphic" operator="arithmetic" k2=".55" k3=".45" result="mix"/>
+    <feComposite in="blend" in2="SourceGraphic" operator="arithmetic" k2=".55" k3=".45" result="mix" data-tweak-k2="[0, 1] Weight of the original image" data-tweak-k3="[0, 1] Grain strength; keep k2 + k3 about 1"/>
     <feComposite in="mix" in2="SourceAlpha" operator="in"/>
   </filter>
 </svg>
