@@ -427,12 +427,14 @@
         font-family: var(--f-mono);
         color: var(--accent);
       }
-      details.code {
+      details.code,
+      details.tune {
         border-top: 1px solid var(--line);
         margin-top: 6px;
         padding-top: 8px;
       }
-      details.code summary {
+      details.code summary,
+      details.tune summary {
         cursor: pointer;
         font: 500 12px var(--f-mono);
         color: var(--accent);
@@ -441,16 +443,48 @@
         justify-content: space-between;
         align-items: center;
       }
-      details.code summary::-webkit-details-marker {
+      details.code summary::-webkit-details-marker,
+      details.tune summary::-webkit-details-marker {
         display: none;
       }
-      details.code summary::after {
+      details.code summary::after,
+      details.tune summary::after {
         content: "+";
         font-family: var(--f-mono);
         font-size: 16px;
       }
-      details.code[open] summary::after {
+      details.code[open] summary::after,
+      details.tune[open] summary::after {
         content: "−";
+      }
+      .tune dl {
+        margin: 8px 0 0;
+        display: grid;
+        gap: 10px;
+        font-size: 13px;
+      }
+      .tune dt {
+        display: flex;
+        gap: 6px;
+        align-items: baseline;
+        flex-wrap: wrap;
+      }
+      .tune dt .el {
+        font: 400 11px var(--f-mono);
+        color: var(--muted);
+      }
+      .tune dd {
+        margin: 2px 0 0;
+        color: var(--muted);
+      }
+      .tune .meta {
+        display: block;
+        margin-top: 3px;
+        font: 400 11px var(--f-mono);
+        color: var(--muted);
+      }
+      .tune .val {
+        color: var(--ink);
       }
       .codebox {
         position: relative;
@@ -1083,6 +1117,7 @@
             >Motion <span><!-- build:count:motion --></span></a
           >
           <a href="#usage">Using the kit</a>
+          <a href="#tuning">Tuning filters</a>
           <a href="#divi">Divi</a>
           <a href="#reference">Support &amp; pitfalls</a>
         </nav>
@@ -1277,6 +1312,44 @@ require_once get_stylesheet_directory() . '/svg-filters/svg-filters.php';</pre>
                   </li>
                 </ul>
               </div>
+            </div>
+            <div class="panel" id="tuning">
+              <h3>Tuning filters</h3>
+              <p>
+                <em>Tune it</em> on each card lists the values worth changing,
+                with a sensible range. They are plain attributes in the SVG
+                file; edit them there. Knobs most filters share:
+              </p>
+              <ul>
+                <li>
+                  <strong>Pixel values</strong> (<code>stdDeviation</code>,
+                  <code>scale</code>, <code>radius</code>, <code>dx</code>/<code>dy</code>)
+                  don't scale with the element. Tune them at the real size.
+                </li>
+                <li>
+                  <strong>Noise.</strong> <code>baseFrequency</code> sets the
+                  grain of <code>feTurbulence</code>: lower is larger. Two values
+                  are horizontal and vertical. <code>numOctaves</code> adds
+                  detail (and cost); <code>seed</code> picks another, equally
+                  stable pattern.
+                </li>
+                <li>
+                  <strong>Colors</strong> (<code>flood-color</code>,
+                  <code>lighting-color</code>) take any CSS color. Color tables
+                  (<code>tableValues</code>) use 0–1 per channel: divide the
+                  8-bit value by 255.
+                </li>
+                <li>
+                  <strong>Filter region.</strong> If an effect gets cut off at the
+                  edges, widen <code>x</code>, <code>y</code>, <code>width</code>
+                  and <code>height</code> on the <code>&lt;filter&gt;</code>.
+                </li>
+                <li>
+                  <strong>Variants.</strong> To use one filter twice with
+                  different values (say two duotones), copy the file and give
+                  the filter a new ID; you get new classes for it.
+                </li>
+              </ul>
             </div>
           </section>
 

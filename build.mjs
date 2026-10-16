@@ -44,7 +44,7 @@ for (const name of fs.readdirSync(path.join(mainDir, 'filters')).filter(f => f.e
   const rel = `filters/${name}`;
   const svg = read(rel);
   sources.set(rel, svg);
-  for (const [block, id] of svg.matchAll(FILTER_RE)) {
+  for (const { 0: block, 1: id, index: blockStart } of svg.matchAll(FILTER_RE)) {
     if (filters.some(f => f.id === id)) continue; // duplicate ID: first file wins, like the loader
     const open = block.slice(0, block.indexOf('>') + 1);
     const attr = Object.fromEntries([...open.matchAll(/([\w:-]+)="([^"]*)"/g)].map(([, k, v]) => [k, unxml(v)]));
@@ -55,6 +55,7 @@ for (const name of fs.readdirSync(path.join(mainDir, 'filters')).filter(f => f.e
       category: attr['data-category'], support: attr['data-support'], cost: attr['data-cost'], demo: attr['data-demo'],
       demoText: attr['data-demo-text'], demoBg: attr['data-demo-bg'], note: attr['data-note'],
       prims: primitives(block),
+      tweaks: tweaks(block, blockStart, `${rel} #${id}`),
     };
     const bad = [
       !f.title && '<title>', !f.desc && '<desc>',
@@ -68,6 +69,9 @@ for (const name of fs.readdirSync(path.join(mainDir, 'filters')).filter(f => f.e
   }
 }
 if (!filters.length) fail(`no filters found in ${mainDir}/filters`);
+for (const f of filters) for (const t of f.tweaks) { // offsets drive "Copy with my values"
+  if (unxml(sources.get(f.file).slice(t.start, t.end)) !== t.value) fail(`${f.file} #${f.id}: offset mismatch for ${t.attr}`);
+}
 filters.sort((a, b) => CATEGORIES.indexOf(a.category) - CATEGORIES.indexOf(b.category)); // stable: file order within a category
 
 /** Top-level primitives of a filter, e.g. "feTurbulence + <animate> → feDisplacementMap". */
@@ -88,6 +92,28 @@ function primitives(block) {
   }, []).map(({ name, n }) => (n > 1 ? `${name} ×${n}` : name)).join(' → ');
 }
 
+/**
+ * Tuning hints: data-tweak-<attr>="[min, max] description" on a primitive.
+ * index: position in filter.querySelectorAll('*'); start/end: the value's offsets in the file.
+ */
+function tweaks(block, blockStart, where) {
+  const out = [];
+  let index = -1;
+  for (const m of block.matchAll(/<([\w:-]+)\b([^>]*?)\/?>/g)) { // opening tags only
+    if (m[1] === 'filter') continue;
+    index++;
+    const attrsAt = blockStart + m.index + 1 + m[1].length;
+    for (const [, attr, hint] of m[2].matchAll(/\sdata-tweak-([\w:-]+)="([^"]*)"/g)) {
+      const a = new RegExp(`\\s${attr}="([^"]*)"`).exec(m[2]);
+      if (!a) fail(`${where}: data-tweak-${attr} on <${m[1]}>, which has no ${attr}`);
+      const [, min, max, text] = unxml(hint).match(/^(?:\[\s*(-?[\d.]+)\s*,\s*(-?[\d.]+)\s*\]\s*)?([\s\S]*)$/);
+      const start = attrsAt + a.index + a[0].indexOf('"') + 1;
+      out.push({ el: m[1], attr, value: unxml(a[1]), text, min, max, index, start, end: start + a[1].length });
+    }
+  }
+  return out;
+}
+
 /* ---------- Render ---------- */
 
 const codePanel = rel => {
@@ -95,6 +121,11 @@ const codePanel = rel => {
   return `<details class="code"><summary>${esc(rel)}</summary><div class="codebox">`
     + `<pre>${esc(content)}</pre><button class="copy" type="button">Copy</button></div></details>`;
 };
+
+const tunePanel = f => !f.tweaks.length ? '' : `<details class="tune"><summary>Tune it (${f.tweaks.length})</summary><dl>`
+  + f.tweaks.map(t => `<div><dt><code>${esc(t.attr)}</code> <span class="el">${esc(t.el)}</span></dt>`
+    + `<dd>${inline(t.text)}<span class="meta">now <code class="val">${esc(t.value)}</code>${t.min !== undefined ? ` · range ${t.min} to ${t.max}` : ''}</span></dd></div>`).join('')
+  + '</dl></details>\n    ';
 
 const SCENE_LABEL = '<span class="scene-label">53.54°N 9.98°E</span>';
 // Before/after slider: the subject twice, unfiltered (left of --pos) and filtered (right of it).
@@ -130,7 +161,7 @@ function card(f) {
     <div class="chips"><span class="chip ${cls}">${label}</span><span class="chip cost">Cost: ${f.cost}</span></div>${
     f.note ? `\n    <p class="note">${inline(f.note)}</p>` : ''}${
     HINTS[f.demo] ? `\n    <div class="hint">${HINTS[f.demo]}</div>` : ''}
-    ${codePanel(f.file)}
+    ${tunePanel(f)}${codePanel(f.file)}
   </div>
 </article>`;
 }
@@ -170,10 +201,11 @@ console.log(`dist/index.html: ${filters.length} filters, module ${version}`);
 
 /* ---------- README filter table ---------- */
 
-const table = ['| File | Class | Category | Description | Notes |', '|---|---|---|---|---|',
+const table = ['| File | Class | Category | Description | Tunable | Notes |', '|---|---|---|---|---|---|',
   ...filters.map(f => {
     const notes = [f.support !== 'all' && SUPPORT[f.support][1] + '.', f.note].filter(Boolean).join(' ');
-    return `| ${path.basename(f.file)} | \`${f.id}\` | ${f.category} | ${f.desc} | ${notes} |`;
+    const tunable = [...new Set(f.tweaks.map(t => `\`${t.attr}\``))].join(', ');
+    return `| ${path.basename(f.file)} | \`${f.id}\` | ${f.category} | ${f.desc} | ${tunable} | ${notes} |`;
   })].join('\n');
 const readmePath = path.join(mainDir, 'README.md');
 const readme = fs.existsSync(readmePath) ? fs.readFileSync(readmePath, 'utf8') : '';
