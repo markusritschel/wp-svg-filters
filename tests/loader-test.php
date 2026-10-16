@@ -12,13 +12,20 @@ PHP_SAPI === 'cli' || exit;
 define( 'ABSPATH', __DIR__ );
 define( 'WEEK_IN_SECONDS', 604800 );
 
-$GLOBALS['hooks']  = array();
-$GLOBALS['inline'] = '';
-$theme             = dirname( __DIR__, 2 ); // module folder sits inside the "child theme"
+$GLOBALS['hooks']   = array();
+$GLOBALS['filters'] = array();
+$GLOBALS['inline']  = '';
+$theme              = dirname( __DIR__, 2 ); // module folder sits inside the "child theme"
 
 function add_action( $hook, $cb, $prio = 10 ) { $GLOBALS['hooks'][ $hook ][] = $cb; }
 function do_action( $hook ) { foreach ( $GLOBALS['hooks'][ $hook ] ?? array() as $cb ) { $cb(); } }
-function apply_filters( $hook, $value ) { return $value; }
+function add_filter( $hook, $cb ) { $GLOBALS['filters'][ $hook ][] = $cb; }
+function apply_filters( $hook, $value ) {
+	foreach ( $GLOBALS['filters'][ $hook ] ?? array() as $cb ) {
+		$value = $cb( $value );
+	}
+	return $value;
+}
 function get_transient( $key ) { return false; }
 function set_transient( $key, $value, $ttl ) { return true; }
 function delete_transient( $key ) { return true; }
@@ -44,8 +51,21 @@ function check( $ok, $msg ) {
 
 require dirname( __DIR__ ) . '/svg-filters.php';
 
+// Filters from other sources (e.g. a plugin's uploads): one new, one colliding with a file.
+add_filter( 'svgf_extra_sources', function ( $sources ) {
+	$sources[] = '<filter id="fx-extra-test" data-category="custom"><title>Extra</title>'
+		. '<feGaussianBlur stdDeviation="3" data-tweak-stdDeviation="[0, 9] Radius"/></filter>';
+	$sources[] = '<filter id="fx-blur"><feGaussianBlur stdDeviation="99"/></filter>';
+	return $sources;
+} );
+
+// Extra defs markup (e.g. a plugin's tuned filter copies).
+add_filter( 'svgf_extra_defs', function ( $markup ) {
+	return $markup . '<filter id="fx-tuned-copy"><feGaussianBlur stdDeviation="1"/></filter>';
+} );
+
 // Expected IDs, parsed independently with a real XML parser.
-$expected = array();
+$expected = array( 'fx-extra-test' );
 foreach ( glob( SVGF_DIR . '/filters/*.svg' ) as $file ) {
 	$doc = new DOMDocument();
 	check( $doc->load( $file ), basename( $file ) . ' is well-formed XML' );
@@ -60,6 +80,27 @@ $ids  = $data['ids'];
 sort( $ids );
 check( $ids === $expected, count( $ids ) . ' filter IDs collected, matching the XML parse' );
 check( in_array( 'fx-blur', $ids, true ) && in_array( 'fx-blur-solid', $ids, true ), 'both blur filters present' );
+check( false === strpos( $data['markup'], 'stdDeviation="99"' ), 'extra source with a file ID is skipped (file wins)' );
+
+// Metadata accessor: unstripped metadata per filter, stripped markup for printing.
+$meta = svgf_filters();
+check( array_keys( $meta ) === $data['ids'], 'svgf_filters() lists every collected ID in order' );
+$duo = $meta['fx-duotone'];
+check( 'Duotone' === $duo['title'] && 'color' === $duo['category'], 'title and category of fx-duotone' );
+check( 0 === strpos( $duo['desc'], 'Converts to grayscale' ), 'desc of fx-duotone' );
+check(
+	array( 'key' => 'feFuncR|tableValues', 'attr' => 'tableValues', 'default' => '0.10 0.99', 'hint' => 'Red of the shadow and the highlight color, 0–1 each' )
+		=== $duo['tweaks'][0],
+	'first tweak of fx-duotone: key, attr, default, hint'
+);
+check( 3 === count( $duo['tweaks'] ), 'fx-duotone has 3 tweaks' );
+$spot_keys = array_column( $meta['fx-spotlight']['tweaks'], 'key' );
+check( in_array( '#fx-spot-light|z', $spot_keys, true ), 'tweak on a primitive with an id is keyed by #id' );
+check( in_array( 'feSpecularLighting|lighting-color', $spot_keys, true ), 'hyphenated attribute names kept' );
+check( false === strpos( $duo['markup'], 'data-' ) && 0 === strpos( $duo['markup'], '<filter id="fx-duotone"' ),
+	'markup per filter is the stripped, printable <filter>' );
+check( 'custom' === $meta['fx-extra-test']['category'] && 'Extra' === $meta['fx-extra-test']['title'],
+	'metadata of extra sources' );
 
 // Defs: footer only, never wp_body_open.
 check( empty( $GLOBALS['hooks']['wp_body_open'] ), 'nothing hooked on wp_body_open' );
@@ -67,7 +108,9 @@ ob_start();
 do_action( 'wp_footer' );
 $footer = ob_get_clean();
 check( false !== strpos( $footer, '<svg id="svgf-defs"' ), 'defs printed in wp_footer' );
-check( substr_count( $footer, '<filter ' ) === count( $expected ), 'every filter printed exactly once' );
+$printed = substr_count( $footer, '<filter ' );
+check( count( $expected ) + 1 === $printed, "every filter printed exactly once, plus the extra defs ({$printed} printed)" );
+check( (bool) preg_match( '#<defs>.*<filter id="fx-tuned-copy">.*</defs>#s', $footer ), 'extra defs printed inside the same <defs>' );
 ob_start();
 do_action( 'wp_footer' );
 check( '' === ob_get_clean(), 'defs not printed twice' );
