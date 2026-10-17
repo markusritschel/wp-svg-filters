@@ -4,6 +4,23 @@ All notable changes to the SVG Filter Kit. Versions follow
 [Semantic Versioning](https://semver.org/); release tags are `vX.Y.Z` and
 must match `SVGF_VERSION` in `svg-filters.php`.
 
+## [1.8.0]
+
+### Added
+
+- Color tint: *Tint strength* (`flood-opacity`; 1 keeps the previous look).
+- Living grain: *Grain strength*, as in Film grain (same look at the
+  default).
+- Texture fill: *Vein color* and *Base color* plus presets (Amethyst,
+  Carrara, Nero, Malachite, Lapis, Rose quartz, Gold).
+
+### Changed
+
+- Texture fill maps the noise onto two colors by brightness instead of a
+  fixed multicolor matrix, so its colors can be chosen (the default look
+  changes from multicolor to violet veins).
+- README filter table regenerated (Threshold, Film grain were out of date).
+
 ## [1.7.0]
 
 ### Changed

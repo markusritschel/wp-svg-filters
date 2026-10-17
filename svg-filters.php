@@ -24,7 +24,7 @@ if ( defined( 'SVGF_VERSION' ) ) {
 	return; // already loaded (e.g. theme and plugin copy both present)
 }
 
-define( 'SVGF_VERSION', '1.7.0' );
+define( 'SVGF_VERSION', '1.8.0' );
 define( 'SVGF_DIR', __DIR__ );
 define( 'SVGF_FILE', __FILE__ );
 
