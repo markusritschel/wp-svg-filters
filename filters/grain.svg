@@ -5,8 +5,10 @@
     <desc>Blends high-frequency mono noise with `overlay` and mixes it back at about half strength.</desc>
     <feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="3" stitchTiles="stitch" result="noise" data-tweak-baseFrequency="[0.2, 2] Grain fineness | Higher gives finer grain"/>
     <feColorMatrix in="noise" type="matrix" values=".33 .33 .33 0 0  .33 .33 .33 0 0  .33 .33 .33 0 0  0 0 0 0 1" result="mono"/>
-    <feBlend in="SourceGraphic" in2="mono" mode="overlay" result="blend"/>
-    <feComposite in="blend" in2="SourceGraphic" operator="arithmetic" k2=".55" k3=".45" result="mix" data-tweak-k2="[0, 1] Original weight | Weight of the original image" data-tweak-k3="[0, 1] Grain strength | Keep original weight + grain strength about 1"/>
+    <feComponentTransfer in="mono" result="veil">
+      <feFuncA type="linear" slope=".55" intercept="0" data-tweak-slope="[0, 1] Grain strength | 0 shows no grain, 1 the full overlay"/>
+    </feComponentTransfer>
+    <feBlend in="SourceGraphic" in2="veil" mode="overlay" result="mix"/>
     <feComposite in="mix" in2="SourceAlpha" operator="in"/>
   </filter>
 </svg>
