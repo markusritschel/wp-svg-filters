@@ -3,7 +3,7 @@
           data-category="motion" data-support="all" data-cost="medium" data-demo="melt" data-note="Needs `assets/svg-filters.js`. Duplicate the file with a new ID for independent instances.">
     <title>Hover melt</title>
     <desc>The displacement `scale` eases from 0 to 45 on hover, or on tap on touch screens.</desc>
-    <feTurbulence type="fractalNoise" baseFrequency=".012 .02" numOctaves="2" seed="8" result="map" data-tweak-baseFrequency="Melt pattern frequency, horizontal and vertical. The hover strength (45) is set in assets/svg-filters.js"/>
+    <feTurbulence type="fractalNoise" baseFrequency=".012 .02" numOctaves="2" seed="8" result="map" data-tweak-baseFrequency="[0, 0.1] {pair} Melt frequency | Horizontal and vertical. The hover strength (45) is set in assets/svg-filters.js"/>
     <feDisplacementMap id="fx-melt-map" in="SourceGraphic" in2="map" scale="0" xChannelSelector="R" yChannelSelector="G"/>
   </filter>
 </svg>

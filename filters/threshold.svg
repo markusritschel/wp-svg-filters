@@ -3,11 +3,14 @@
           data-category="color" data-support="all" data-cost="low" data-demo="scene">
     <title>Threshold</title>
     <desc>Cuts luminance into two ink tones for stencil and photocopy looks.</desc>
-    <feColorMatrix type="matrix" values=".3 .59 .11 0 0  .3 .59 .11 0 0  .3 .59 .11 0 0  0 0 0 1 0"/>
-    <feComponentTransfer>
-      <feFuncR type="discrete" tableValues="0.08 0.96" data-tweak-tableValues="Red of the dark and the light ink, 0–1 each"/>
-      <feFuncG type="discrete" tableValues="0.09 0.94" data-tweak-tableValues="Green of the dark and the light ink, 0–1 each"/>
-      <feFuncB type="discrete" tableValues="0.16 0.90" data-tweak-tableValues="Blue of the dark and the light ink, 0–1 each"/>
+    <feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  .3 .59 .11 0 0" result="luma"/>
+    <feComponentTransfer in="luma" result="mask">
+      <feFuncA type="discrete" tableValues="0 1"/>
     </feComponentTransfer>
+    <feFlood flood-color="#141729" result="dark" data-tweak-flood-color="Dark ink | Color of the areas darker than middle gray"/>
+    <feFlood flood-color="#f5f0e6" result="light" data-tweak-flood-color="Light ink | Color of the areas lighter than middle gray"/>
+    <feComposite in="light" in2="mask" operator="in" result="lit"/>
+    <feComposite in="lit" in2="dark" operator="over" result="ink"/>
+    <feComposite in="ink" in2="SourceAlpha" operator="in"/>
   </filter>
 </svg>

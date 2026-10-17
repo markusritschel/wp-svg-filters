@@ -3,7 +3,7 @@
           data-category="distortion" data-support="all" data-cost="low" data-demo="type" data-demo-text="Sketch" data-note="Best on text and icons.">
     <title>Rough edges</title>
     <desc>Small, busy displacement gives type and icons a hand-cut, ink-bleed edge.</desc>
-    <feTurbulence type="turbulence" baseFrequency=".045" numOctaves="2" seed="2" result="jitter" data-tweak-baseFrequency="[0.005, 0.2] Jitter frequency; higher is busier"/>
-    <feDisplacementMap in="SourceGraphic" in2="jitter" scale="7" xChannelSelector="R" yChannelSelector="G" data-tweak-scale="[0, 30] Edge roughness in px"/>
+    <feTurbulence type="turbulence" baseFrequency=".045" numOctaves="2" seed="2" result="jitter" data-tweak-baseFrequency="[0.005, 0.2] Jitter frequency | Higher is busier"/>
+    <feDisplacementMap in="SourceGraphic" in2="jitter" scale="7" xChannelSelector="R" yChannelSelector="G" data-tweak-scale="[0, 30 px] Edge roughness"/>
   </filter>
 </svg>

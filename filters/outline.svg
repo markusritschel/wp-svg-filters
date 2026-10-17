@@ -3,7 +3,7 @@
           data-category="shape" data-support="all" data-cost="low" data-demo="type" data-demo-text="Hollow" data-note="Works on text, icons and any shape.">
     <title>Outline only</title>
     <desc>Dilates the alpha, subtracts the original and fills the remaining ring with a flood color.</desc>
-    <feMorphology in="SourceAlpha" operator="dilate" radius="3" result="thick" data-tweak-radius="[1, 12] Outline width in px"/>
+    <feMorphology in="SourceAlpha" operator="dilate" radius="3" result="thick" data-tweak-radius="[1, 12 px] Outline width"/>
     <feComposite in="thick" in2="SourceAlpha" operator="out" result="ring"/>
     <feFlood flood-color="#3a40d1" result="ink" data-tweak-flood-color="Outline color"/>
     <feComposite in="ink" in2="ring" operator="in"/>

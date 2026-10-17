@@ -4,7 +4,7 @@
     <title>Hue cycle</title>
     <desc>Rotates the hue through 360° with a single animated attribute, the cheapest animated filter there is.</desc>
     <feColorMatrix type="hueRotate" values="0">
-      <animate attributeName="values" from="0" to="360" dur="10s" repeatCount="indefinite" data-tweak-dur="[1, 60] Time for one full turn of the color wheel"/>
+      <animate attributeName="values" from="0" to="360" dur="10s" repeatCount="indefinite" data-tweak-dur="[1, 60 s] Cycle time | Time for one full turn of the color wheel"/>
     </feColorMatrix>
   </filter>
 </svg>

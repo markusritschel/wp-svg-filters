@@ -3,8 +3,8 @@
           data-category="glass" data-support="chromium" data-cost="high" data-demo="glass" data-note="Use it through `.glass .glass--liquid` (backdrop-filter), not as an `.fx-` class.">
     <title>Refractive glass</title>
     <desc>Displaces the backdrop through a smooth noise lens so content behind the pane bends; other browsers get a frosted fallback.</desc>
-    <feTurbulence type="fractalNoise" baseFrequency=".008 .012" numOctaves="2" seed="3" result="lens" data-tweak-baseFrequency="Lens frequency, horizontal and vertical; lower gives larger, smoother bends"/>
+    <feTurbulence type="fractalNoise" baseFrequency=".008 .012" numOctaves="2" seed="3" result="lens" data-tweak-baseFrequency="[0, 0.05] {pair} Lens frequency | Horizontal and vertical; lower gives larger, smoother bends"/>
     <feGaussianBlur in="lens" stdDeviation="2" result="smooth"/>
-    <feDisplacementMap in="SourceGraphic" in2="smooth" scale="70" xChannelSelector="R" yChannelSelector="G" data-tweak-scale="[0, 150] Refraction strength in px"/>
+    <feDisplacementMap in="SourceGraphic" in2="smooth" scale="70" xChannelSelector="R" yChannelSelector="G" data-tweak-scale="[0, 150 px] Refraction strength"/>
   </filter>
 </svg>

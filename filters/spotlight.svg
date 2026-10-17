@@ -5,7 +5,7 @@
     <desc>JavaScript moves an `fePointLight` to the pointer over a noise surface.</desc>
     <feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="3" seed="11" result="bump"/>
     <feSpecularLighting in="bump" surfaceScale="3" specularConstant=".9" specularExponent="18" lighting-color="#ffe6b8" result="light" data-tweak-lighting-color="Light color" data-tweak-surfaceScale="[0, 10] Surface bumpiness">
-      <fePointLight id="fx-spot-light" x="150" y="110" z="70" data-tweak-z="[10, 300] Light height in px; higher gives a wider pool"/>
+      <fePointLight id="fx-spot-light" x="150" y="110" z="70" data-tweak-z="[10, 300 px] Light height | Higher gives a wider pool of light"/>
     </feSpecularLighting>
     <feComposite in="SourceGraphic" in2="light" operator="arithmetic" k2="1" k3="1" result="lit"/>
     <feComposite in="lit" in2="SourceAlpha" operator="in"/>
