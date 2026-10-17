@@ -4,7 +4,7 @@ All notable changes to the SVG Filter Kit. Versions follow
 [Semantic Versioning](https://semver.org/); release tags are `vX.Y.Z` and
 must match `SVGF_VERSION` in `svg-filters.php`.
 
-## [1.3.0] (not yet tagged)
+## [1.3.0]
 
 ### Added
 
