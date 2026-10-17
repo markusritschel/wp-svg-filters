@@ -4,6 +4,20 @@ All notable changes to the SVG Filter Kit. Versions follow
 [Semantic Versioning](https://semver.org/); release tags are `vX.Y.Z` and
 must match `SVGF_VERSION` in `svg-filters.php`.
 
+## [1.5.0]
+
+### Added
+
+- Threshold: *Balance* moves the split between the two inks (0 keeps the
+  previous look).
+
+### Changed
+
+- Clearer tuning labels: *Grain fineness* (was *Grain size*, whose higher
+  values gave finer grain) in Film grain and Living grain, *Fibre fineness*
+  (was *Fibre size*) in Paper relief; the Hover melt description no longer
+  points to a file.
+
 ## [1.4.0]
 
 ### Added
