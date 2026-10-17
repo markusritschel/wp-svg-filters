@@ -4,6 +4,14 @@ All notable changes to the SVG Filter Kit. Versions follow
 [Semantic Versioning](https://semver.org/); release tags are `vX.Y.Z` and
 must match `SVGF_VERSION` in `svg-filters.php`.
 
+## [1.6.0]
+
+### Added
+
+- Color presets for Duotone (Midnight peach, Sepia, Cyanotype, Grape and
+  lemon, Forest, Charcoal) and Threshold (Ink on paper, Blueprint,
+  Newsprint, Riso pink, Neon).
+
 ## [1.5.0]
 
 ### Added
