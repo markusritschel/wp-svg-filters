@@ -4,6 +4,23 @@ All notable changes to the SVG Filter Kit. Versions follow
 [Semantic Versioning](https://semver.org/); release tags are `vX.Y.Z` and
 must match `SVGF_VERSION` in `svg-filters.php`.
 
+## [1.4.0]
+
+### Added
+
+- Hint syntax 2: `[min, max unit] {type} Label | Description` with optional
+  unit (`px`, `deg`, `s`, `%`), control type (`pair`, `levels`, `matrix`)
+  and a separate description; all filters use short labels now.
+- `data-presets` (JSON) on a filter, returned by `svgf_filters()` as
+  `presets`; Emboss (Emboss, Sharpen, Find edges, Soften) and Inner shadow
+  (Soft, Hard, Wide, Top, Glow) have presets.
+
+### Changed
+
+- Duotone and Threshold blend two `feFlood` colors by brightness instead of
+  per-channel tables, so their colors are tunable as colors (same look;
+  previous `tableValues` tunings no longer apply).
+
 ## [1.3.0]
 
 ### Added
