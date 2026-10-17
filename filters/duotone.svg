@@ -1,6 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg">
   <filter id="fx-duotone" color-interpolation-filters="sRGB"
-          data-category="color" data-support="all" data-cost="low" data-demo="scene">
+          data-category="color" data-support="all" data-cost="low" data-demo="scene"
+          data-presets='{"Midnight peach":{"feFlood|flood-color":"#1a1f61","feFlood:2|flood-color":"#fcbd8f"},"Sepia":{"feFlood|flood-color":"#2e1d0f","feFlood:2|flood-color":"#f2dfc0"},"Cyanotype":{"feFlood|flood-color":"#0d2b52","feFlood:2|flood-color":"#dbe9f5"},"Grape and lemon":{"feFlood|flood-color":"#4b1272","feFlood:2|flood-color":"#ffd23f"},"Forest":{"feFlood|flood-color":"#10301f","feFlood:2|flood-color":"#cfe8b8"},"Charcoal":{"feFlood|flood-color":"#1c1c1c","feFlood:2|flood-color":"#f4f1ea"}}'>
     <title>Duotone</title>
     <desc>Converts to grayscale, then blends two brand colors by brightness: the shadow color in the darks, the highlight color in the lights.</desc>
     <feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  .33 .33 .33 0 0" result="gray"/>

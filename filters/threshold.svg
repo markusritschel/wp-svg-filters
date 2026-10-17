@@ -1,6 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg">
   <filter id="fx-threshold" color-interpolation-filters="sRGB"
-          data-category="color" data-support="all" data-cost="low" data-demo="scene">
+          data-category="color" data-support="all" data-cost="low" data-demo="scene"
+          data-presets='{"Ink on paper":{"feFlood|flood-color":"#141729","feFlood:2|flood-color":"#f5f0e6"},"Blueprint":{"feFlood|flood-color":"#0b3d91","feFlood:2|flood-color":"#e8f0ff"},"Newsprint":{"feFlood|flood-color":"#232323","feFlood:2|flood-color":"#e9e3d3"},"Riso pink":{"feFlood|flood-color":"#e8417d","feFlood:2|flood-color":"#fff4e0"},"Neon":{"feFlood|flood-color":"#0b0b0b","feFlood:2|flood-color":"#39ff14"}}'>
     <title>Threshold</title>
     <desc>Cuts luminance into two ink tones for stencil and photocopy looks.</desc>
     <feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  .3 .59 .11 0 0" result="luma"/>
