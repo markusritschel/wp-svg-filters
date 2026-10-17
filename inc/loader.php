@@ -114,9 +114,11 @@ function svgf_collect() {
  * Tuning hints (data-tweak-<attribute>) are keyed '<primitive>|<attribute>',
  * where <primitive> is '#<id>' for primitives with an id, otherwise the tag
  * name, with ':<n>' from its second occurrence on (feComposite:2).
+ * Presets come from the filter's data-presets JSON (name => tweak key => value).
  *
  * @return array<string, array{id:string, title:string, desc:string, category:string,
- *         tweaks:array<int, array{key:string, attr:string, default:string, hint:string}>, markup:string}>
+ *         tweaks:array<int, array{key:string, attr:string, default:string, hint:string}>,
+ *         presets:array<string, array<string, string>>, markup:string}>
  *         markup: the printable <filter> without data-* attributes.
  */
 function svgf_filters() {
@@ -136,6 +138,7 @@ function svgf_filters() {
 			'desc'     => '',
 			'category' => '',
 			'tweaks'   => array(),
+			'presets'  => array(),
 			'markup'   => preg_replace( '#\sdata-[\w.:-]+\s*=\s*("[^"]*"|\'[^\']*\')#', '', $raw ),
 		);
 
@@ -152,6 +155,20 @@ function svgf_filters() {
 				$meta[ $tag ] = $node ? trim( $node->textContent ) : '';
 			}
 			$meta['category'] = $filter->getAttribute( 'data-category' );
+
+			// Presets: keep names with string values only; a broken attribute gives no presets.
+			$presets = json_decode( $filter->getAttribute( 'data-presets' ), true );
+			foreach ( is_array( $presets ) ? $presets : array() as $name => $values ) {
+				$clean = array();
+				foreach ( is_array( $values ) ? $values : array() as $key => $value ) {
+					if ( is_string( $key ) && is_scalar( $value ) ) {
+						$clean[ $key ] = (string) $value;
+					}
+				}
+				if ( is_string( $name ) && $clean ) {
+					$meta['presets'][ $name ] = $clean;
+				}
+			}
 
 			$seen = array();
 			foreach ( $filter->getElementsByTagName( '*' ) as $el ) {

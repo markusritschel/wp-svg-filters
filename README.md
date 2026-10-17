@@ -119,9 +119,9 @@ live.
 <!-- filters:start -->
 | File | Class | Category | Description | Tunable | Notes |
 |---|---|---|---|---|---|
-| duotone.svg | `fx-duotone` | color | Converts to grayscale, then maps shadows and highlights to two brand colors with table lookups. | `tableValues` |  |
+| duotone.svg | `fx-duotone` | color | Converts to grayscale, then blends two brand colors by brightness: the shadow color in the darks, the highlight color in the lights. | `flood-color` |  |
 | posterize.svg | `fx-posterize` | color | Discrete steps per channel flatten gradients into screen-print bands. | `tableValues` |  |
-| threshold.svg | `fx-threshold` | color | Cuts luminance into two ink tones for stencil and photocopy looks. | `tableValues` |  |
+| threshold.svg | `fx-threshold` | color | Cuts luminance into two ink tones for stencil and photocopy looks. | `flood-color` |  |
 | tint.svg | `fx-tint` | color | Keeps luminance and replaces hue and saturation with a flood color through the `color` blend mode. | `flood-color` |  |
 | grain.svg | `fx-grain` | texture | Blends high-frequency mono noise with `overlay` and mixes it back at about half strength. | `baseFrequency`, `k2`, `k3` |  |
 | paper.svg | `fx-paper` | texture | Lights low-frequency noise as a height map and multiplies it over the image like a print on cotton paper. | `baseFrequency`, `surfaceScale` |  |
@@ -186,14 +186,35 @@ it strips all `data-*` attributes before printing and keeps `<title>` and
 | `data-demo-bg`   | optional `dark` background for the `type` demo                                |
 
 The attributes above go on the `<filter>`. Tuning hints go on the primitive
-whose attribute they describe, as `data-tweak-<attribute>`, with an optional
-`[min, max]` range:
+whose attribute they describe, as `data-tweak-<attribute>`:
 
 ```xml
-<feGaussianBlur stdDeviation="8" data-tweak-stdDeviation="[0, 30] Blur radius in px; higher is softer"/>
+<feGaussianBlur stdDeviation="8" data-tweak-stdDeviation="[0, 30 px] Blur radius | Higher is softer"/>
 ```
 
-The demo site lists them under *Tune it* (with live controls) and the
+The format is `[min, max unit] {type} Label | Description`; everything but
+the label is optional:
+
+| Part             | Meaning                                                                   |
+| ---------------- | ------------------------------------------------------------------------- |
+| `[min, max]`     | range for a slider; optional unit after max: `px`, `deg`, `s` or `%`      |
+| `{pair}`         | two numbers, e.g. `baseFrequency` horizontal and vertical (range applies to each) |
+| `{levels}`       | a list of output levels between 0 and 1 (`tableValues` of posterize)      |
+| `{matrix}`       | a 3×3 `kernelMatrix`                                                      |
+| `Label`          | short name, up to about 40 characters                                     |
+| `\| Description` | longer explanation (shown on demand, e.g. behind an info button)          |
+
+Hex colors (`#rrggbb`) get a color picker without any hint syntax. Values
+are written without units in the SVG; the unit only labels the control.
+
+A filter can offer presets as JSON in `data-presets` on the `<filter>`:
+name → tweak key → value (keys as in `svgf_filters()` below):
+
+```xml
+<filter id="fx-emboss" data-presets='{"Sharpen":{"feConvolveMatrix|kernelMatrix":"0 -1 0 -1 5 -1 0 -1 0"}}'>
+```
+
+The demo site lists the hints under *Tune it* (with live controls) and the
 table above shows them as *Tunable*. Leave out attributes that an
 `<animate>` or `assets/svg-filters.js` overwrites.
 
@@ -224,8 +245,8 @@ add_filter( 'svgf_extra_defs', fn( $markup ) => $markup . $my_trusted_filters );
 ```
 
 `svgf_filters()` returns every loaded filter with `title`, `desc`,
-`category`, its tuning hints (`tweaks`: `key`, `attr`, `default`, `hint`)
-and the printable `markup`. Tweak keys are `<primitive>|<attribute>`, where
+`category`, its tuning hints (`tweaks`: `key`, `attr`, `default`, `hint`),
+its `presets` and the printable `markup`. Tweak keys are `<primitive>|<attribute>`, where
 `<primitive>` is `#<id>` if the primitive has an `id`, otherwise its tag
 name, with `:2`, `:3`, … from the second occurrence on (`feFuncR|tableValues`,
 `#fx-spot-light|z`).

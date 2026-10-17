@@ -1,8 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg">
   <filter id="fx-emboss" color-interpolation-filters="sRGB"
-          data-category="light" data-support="all" data-cost="medium" data-demo="scene">
+          data-category="light" data-support="all" data-cost="medium" data-demo="scene"
+          data-presets='{"Emboss":{"feConvolveMatrix|kernelMatrix":"-2 -1 0 -1 1 1 0 1 2"},"Sharpen":{"feConvolveMatrix|kernelMatrix":"0 -1 0 -1 5 -1 0 -1 0"},"Find edges":{"feConvolveMatrix|kernelMatrix":"-1 -1 -1 -1 8 -1 -1 -1 -1"},"Soften":{"feConvolveMatrix|kernelMatrix":"1 1 1 1 1 1 1 1 1"}}'>
     <title>Emboss</title>
     <desc>A 3×3 convolution kernel; swap the kernel for sharpen, edge detect or box blur.</desc>
-    <feConvolveMatrix order="3" kernelMatrix="-2 -1 0  -1 1 1  0 1 2" preserveAlpha="true" data-tweak-kernelMatrix="3×3 kernel, row by row; 0 -1 0 -1 5 -1 0 -1 0 sharpens, -1 -1 -1 -1 8 -1 -1 -1 -1 finds edges"/>
+    <feConvolveMatrix order="3" kernelMatrix="-2 -1 0  -1 1 1  0 1 2" preserveAlpha="true" data-tweak-kernelMatrix="{matrix} Kernel | 3×3 convolution kernel, row by row; the presets set common kernels"/>
   </filter>
 </svg>

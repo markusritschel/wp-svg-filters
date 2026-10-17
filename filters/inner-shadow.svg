@@ -1,14 +1,15 @@
 <svg xmlns="http://www.w3.org/2000/svg">
   <filter id="fx-inner-shadow"
-          data-category="light" data-support="all" data-cost="low" data-demo="type" data-demo-text="Inset" data-note="Text and icons.">
+          data-category="light" data-support="all" data-cost="low" data-demo="type" data-demo-text="Inset" data-note="Text and icons."
+          data-presets='{"Soft":{"feGaussianBlur|stdDeviation":"6","feOffset|dx":"0","feOffset|dy":"4","feFlood|flood-color":"#000000","feFlood|flood-opacity":".45"},"Hard":{"feGaussianBlur|stdDeviation":"0","feOffset|dx":"4","feOffset|dy":"4","feFlood|flood-color":"#000000","feFlood|flood-opacity":".8"},"Wide":{"feGaussianBlur|stdDeviation":"12","feOffset|dx":"0","feOffset|dy":"0","feFlood|flood-color":"#000000","feFlood|flood-opacity":".6"},"Top":{"feGaussianBlur|stdDeviation":"4","feOffset|dx":"0","feOffset|dy":"8","feFlood|flood-color":"#000000","feFlood|flood-opacity":".65"},"Glow":{"feGaussianBlur|stdDeviation":"8","feOffset|dx":"0","feOffset|dy":"0","feFlood|flood-color":"#ffffff","feFlood|flood-opacity":".8"}}'>
     <title>Inner shadow</title>
     <desc>Inverts the alpha, blurs and offsets it and clips it to the shape, which CSS `box-shadow: inset` cannot do on text.</desc>
     <feComponentTransfer in="SourceAlpha" result="inverse">
       <feFuncA type="table" tableValues="1 0"/>
     </feComponentTransfer>
-    <feGaussianBlur in="inverse" stdDeviation="4" data-tweak-stdDeviation="[0, 15] Shadow softness in px"/>
-    <feOffset dx="4" dy="6" result="offsetBlur" data-tweak-dx="[-20, 20] Horizontal shadow offset in px" data-tweak-dy="[-20, 20] Vertical shadow offset in px"/>
-    <feFlood flood-color="#000000" flood-opacity=".65" data-tweak-flood-color="Shadow color" data-tweak-flood-opacity="[0, 1] Shadow opacity"/>
+    <feGaussianBlur in="inverse" stdDeviation="4" data-tweak-stdDeviation="[0, 15 px] Softness | Blur of the shadow edge"/>
+    <feOffset dx="4" dy="6" result="offsetBlur" data-tweak-dx="[-20, 20 px] Horizontal offset" data-tweak-dy="[-20, 20 px] Vertical offset"/>
+    <feFlood flood-color="#000000" flood-opacity=".65" data-tweak-flood-color="Shadow color" data-tweak-flood-opacity="[0, 1] Shadow opacity | 0 is invisible, 1 fully opaque"/>
     <feComposite in2="offsetBlur" operator="in"/>
     <feComposite in2="SourceAlpha" operator="in" result="shadow"/>
     <feMerge>

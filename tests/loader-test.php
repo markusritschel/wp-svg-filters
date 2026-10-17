@@ -89,11 +89,37 @@ $duo = $meta['fx-duotone'];
 check( 'Duotone' === $duo['title'] && 'color' === $duo['category'], 'title and category of fx-duotone' );
 check( 0 === strpos( $duo['desc'], 'Converts to grayscale' ), 'desc of fx-duotone' );
 check(
-	array( 'key' => 'feFuncR|tableValues', 'attr' => 'tableValues', 'default' => '0.10 0.99', 'hint' => 'Red of the shadow and the highlight color, 0–1 each' )
+	array( 'key' => 'feFlood|flood-color', 'attr' => 'flood-color', 'default' => '#1a1f61', 'hint' => 'Shadow color | Color of the darkest tones' )
 		=== $duo['tweaks'][0],
 	'first tweak of fx-duotone: key, attr, default, hint'
 );
-check( 3 === count( $duo['tweaks'] ), 'fx-duotone has 3 tweaks' );
+check( array( 'feFlood|flood-color', 'feFlood:2|flood-color' ) === array_column( $duo['tweaks'], 'key' ), 'fx-duotone: two color tweaks' );
+
+// Presets: name => tweak key => value; every key belongs to a tweak of its filter.
+check( '0 -1 0 -1 5 -1 0 -1 0' === ( $meta['fx-emboss']['presets']['Sharpen']['feConvolveMatrix|kernelMatrix'] ?? null ), 'presets of fx-emboss' );
+check( array() === $duo['presets'], 'no presets: empty array' );
+foreach ( $meta as $id => $f ) {
+	$keys = array_column( $f['tweaks'], 'key' );
+	foreach ( $f['presets'] as $name => $values ) {
+		if ( array_diff( array_keys( $values ), $keys ) ) {
+			check( false, "preset {$name} of {$id} uses only tweak keys" );
+		}
+	}
+}
+check( true, 'every preset key is a tweak key of its filter' );
+
+// Hint syntax 2: "[min, max unit] {type} Label | Description" (range, unit, type, description optional).
+foreach ( $meta as $id => $f ) {
+	foreach ( $f['tweaks'] as $t ) {
+		if ( 0 === strpos( $id, 'fx-extra' ) ) {
+			continue;
+		}
+		if ( ! preg_match( '/^(\[\s*-?[\d.]+\s*,\s*-?[\d.]+(\s+(px|deg|s|%))?\s*\]\s*)?(\{(pair|levels|matrix)\}\s*)?[^|\[{][^|]{0,40}(\s\|\s.+)?$/u', $t['hint'] ) ) {
+			check( false, "hint syntax of {$id} {$t['key']}: {$t['hint']}" );
+		}
+	}
+}
+check( true, 'every kit hint follows hint syntax 2 with a short label' );
 $spot_keys = array_column( $meta['fx-spotlight']['tweaks'], 'key' );
 check( in_array( '#fx-spot-light|z', $spot_keys, true ), 'tweak on a primitive with an id is keyed by #id' );
 check( in_array( 'feSpecularLighting|lighting-color', $spot_keys, true ), 'hyphenated attribute names kept' );

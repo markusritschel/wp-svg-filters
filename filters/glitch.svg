@@ -4,13 +4,13 @@
     <title>RGB glitch</title>
     <desc>Splits the channels, offsets red and blue, recombines them with `screen` and slices the result with horizontal band noise.</desc>
     <feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="red"/>
-    <feOffset in="red" dx="-7" result="redShift" data-tweak-dx="[-30, 30] Red channel shift in px"/>
+    <feOffset in="red" dx="-7" result="redShift" data-tweak-dx="[-30, 30 px] Red shift | Horizontal shift of the red channel"/>
     <feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="green"/>
     <feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="blue"/>
-    <feOffset in="blue" dx="7" result="blueShift" data-tweak-dx="[-30, 30] Blue channel shift in px"/>
+    <feOffset in="blue" dx="7" result="blueShift" data-tweak-dx="[-30, 30 px] Blue shift | Horizontal shift of the blue channel"/>
     <feBlend in="redShift" in2="green" mode="screen" result="rg"/>
     <feBlend in="rg" in2="blueShift" mode="screen" result="rgb"/>
-    <feTurbulence type="turbulence" baseFrequency="0 .12" numOctaves="1" seed="9" result="bands" data-tweak-baseFrequency="Slice frequency, horizontal and vertical; keep the first value 0 for horizontal bands"/>
-    <feDisplacementMap in="rgb" in2="bands" scale="18" xChannelSelector="R" yChannelSelector="A" data-tweak-scale="[0, 60] Slice displacement in px"/>
+    <feTurbulence type="turbulence" baseFrequency="0 .12" numOctaves="1" seed="9" result="bands" data-tweak-baseFrequency="[0, 0.5] {pair} Slice frequency | Horizontal and vertical; keep the horizontal value at 0 for horizontal bands"/>
+    <feDisplacementMap in="rgb" in2="bands" scale="18" xChannelSelector="R" yChannelSelector="A" data-tweak-scale="[0, 60 px] Slice displacement | How far the slices move"/>
   </filter>
 </svg>

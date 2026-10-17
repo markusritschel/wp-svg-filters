@@ -3,9 +3,9 @@
           data-category="light" data-support="all" data-cost="medium" data-demo="type" data-demo-text="Bevel" data-demo-bg="dark" data-note="Text and icons.">
     <title>Bevel</title>
     <desc>Blurred alpha becomes a height map whose specular highlight is added back onto the source as a glossy rim.</desc>
-    <feGaussianBlur in="SourceAlpha" stdDeviation="3" result="height" data-tweak-stdDeviation="[0.5, 10] Bevel width in px"/>
-    <feSpecularLighting in="height" surfaceScale="5" specularConstant="1.1" specularExponent="22" lighting-color="#ffffff" result="shine" data-tweak-surfaceScale="[0, 15] Bevel depth" data-tweak-lighting-color="Highlight color">
-      <feDistantLight azimuth="225" elevation="42" data-tweak-azimuth="[0, 360] Light direction in degrees"/>
+    <feGaussianBlur in="SourceAlpha" stdDeviation="3" result="height" data-tweak-stdDeviation="[0.5, 10 px] Bevel width"/>
+    <feSpecularLighting in="height" surfaceScale="5" specularConstant="1.1" specularExponent="22" lighting-color="#ffffff" result="shine" data-tweak-surfaceScale="[0, 15] Bevel depth | Height of the bevel's relief" data-tweak-lighting-color="Highlight color | Color of the light on the bevel">
+      <feDistantLight azimuth="225" elevation="42" data-tweak-azimuth="[0, 360 deg] Light direction | Angle the light comes from"/>
     </feSpecularLighting>
     <feComposite in="shine" in2="SourceAlpha" operator="in" result="shineIn"/>
     <feComposite in="SourceGraphic" in2="shineIn" operator="arithmetic" k2="1" k3="1"/>

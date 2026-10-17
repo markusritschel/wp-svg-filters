@@ -2,12 +2,12 @@
   <filter id="fx-duotone" color-interpolation-filters="sRGB"
           data-category="color" data-support="all" data-cost="low" data-demo="scene">
     <title>Duotone</title>
-    <desc>Converts to grayscale, then maps shadows and highlights to two brand colors with table lookups.</desc>
-    <feColorMatrix type="matrix" values=".33 .33 .33 0 0  .33 .33 .33 0 0  .33 .33 .33 0 0  0 0 0 1 0"/>
-    <feComponentTransfer>
-      <feFuncR type="table" tableValues="0.10 0.99" data-tweak-tableValues="Red of the shadow and the highlight color, 0–1 each"/>
-      <feFuncG type="table" tableValues="0.12 0.74" data-tweak-tableValues="Green of the shadow and the highlight color, 0–1 each"/>
-      <feFuncB type="table" tableValues="0.38 0.56" data-tweak-tableValues="Blue of the shadow and the highlight color, 0–1 each"/>
-    </feComponentTransfer>
+    <desc>Converts to grayscale, then blends two brand colors by brightness: the shadow color in the darks, the highlight color in the lights.</desc>
+    <feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  .33 .33 .33 0 0" result="gray"/>
+    <feFlood flood-color="#1a1f61" result="shadow" data-tweak-flood-color="Shadow color | Color of the darkest tones"/>
+    <feFlood flood-color="#fcbd8f" result="highlight" data-tweak-flood-color="Highlight color | Color of the brightest tones"/>
+    <feComposite in="highlight" in2="gray" operator="in" result="light"/>
+    <feComposite in="light" in2="shadow" operator="over" result="mix"/>
+    <feComposite in="mix" in2="SourceAlpha" operator="in"/>
   </filter>
 </svg>
