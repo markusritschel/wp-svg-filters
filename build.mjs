@@ -93,7 +93,8 @@ function primitives(block) {
 }
 
 /**
- * Tuning hints: data-tweak-<attr>="[min, max] description" on a primitive.
+ * Tuning hints: data-tweak-<attr>="[min, max unit] {type} Label | Description" on a primitive;
+ * range, unit (px, deg, s, %), type (pair, levels, matrix) and description are optional.
  * index: position in filter.querySelectorAll('*'); start/end: the value's offsets in the file.
  */
 function tweaks(block, blockStart, where) {
@@ -106,9 +107,11 @@ function tweaks(block, blockStart, where) {
     for (const [, attr, hint] of m[2].matchAll(/\sdata-tweak-([\w:-]+)="([^"]*)"/g)) {
       const a = new RegExp(`\\s${attr}="([^"]*)"`).exec(m[2]);
       if (!a) fail(`${where}: data-tweak-${attr} on <${m[1]}>, which has no ${attr}`);
-      const [, min, max, text] = unxml(hint).match(/^(?:\[\s*(-?[\d.]+)\s*,\s*(-?[\d.]+)\s*\]\s*)?([\s\S]*)$/);
+      const [, min, max, unit = '', type = '', text] = unxml(hint)
+        .match(/^(?:\[\s*(-?[\d.]+)\s*,\s*(-?[\d.]+)(?:\s+(px|deg|s|%))?\s*\]\s*)?(?:\{(\w+)\}\s*)?([\s\S]*)$/);
+      const [label, desc = ''] = text.split(/\s\|\s/, 2);
       const start = attrsAt + a.index + a[0].indexOf('"') + 1;
-      out.push({ el: m[1], attr, value: unxml(a[1]), text, min, max, index, start, end: start + a[1].length });
+      out.push({ el: m[1], attr, value: unxml(a[1]), label, desc, unit, type, min, max, index, start, end: start + a[1].length });
     }
   }
   return out;
@@ -141,8 +144,8 @@ function control(f, t) {
 }
 
 const tunePanel = f => !f.tweaks.length ? '' : `<details class="tune"><summary>Tune it (${f.tweaks.length})</summary><dl>`
-  + f.tweaks.map(t => `<div><dt><code>${esc(t.attr)}</code> <span class="el">${esc(t.el)}</span></dt>`
-    + `<dd>${inline(t.text)}<span class="meta">now <code class="val">${esc(t.value)}</code>${t.min !== undefined ? ` · range ${t.min} to ${t.max}` : ''}</span>`
+  + f.tweaks.map(t => `<div><dt>${inline(t.label)} <code>${esc(t.attr)}</code> <span class="el">${esc(t.el)}</span></dt>`
+    + `<dd>${t.desc ? inline(t.desc) : ''}<span class="meta">now <code class="val">${esc(t.value)}</code>${t.min !== undefined ? ` · range ${t.min} to ${t.max}${t.unit ? ' ' + esc(t.unit) : ''}` : ''}</span>`
     + `${control(f, t)}</dd></div>`).join('')
   + '</dl><div class="tune-actions"><button type="button" class="reset">Reset</button>'
   + `<button type="button" class="copy-tuned">Copy ${esc(path.basename(f.file))} with these values</button></div></details>\n    `;
