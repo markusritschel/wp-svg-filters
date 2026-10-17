@@ -4,11 +4,14 @@
     <title>Threshold</title>
     <desc>Cuts luminance into two ink tones for stencil and photocopy looks.</desc>
     <feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  .3 .59 .11 0 0" result="luma"/>
-    <feComponentTransfer in="luma" result="mask">
+    <feComponentTransfer in="luma" result="shifted">
+      <feFuncA type="linear" slope="1" intercept="0" data-tweak-intercept="[-0.5, 0.5] Balance | Where the image splits into the two inks; higher turns more of it into light ink"/>
+    </feComponentTransfer>
+    <feComponentTransfer in="shifted" result="mask">
       <feFuncA type="discrete" tableValues="0 1"/>
     </feComponentTransfer>
-    <feFlood flood-color="#141729" result="dark" data-tweak-flood-color="Dark ink | Color of the areas darker than middle gray"/>
-    <feFlood flood-color="#f5f0e6" result="light" data-tweak-flood-color="Light ink | Color of the areas lighter than middle gray"/>
+    <feFlood flood-color="#141729" result="dark" data-tweak-flood-color="Dark ink | Color of the dark areas"/>
+    <feFlood flood-color="#f5f0e6" result="light" data-tweak-flood-color="Light ink | Color of the light areas"/>
     <feComposite in="light" in2="mask" operator="in" result="lit"/>
     <feComposite in="lit" in2="dark" operator="over" result="ink"/>
     <feComposite in="ink" in2="SourceAlpha" operator="in"/>
