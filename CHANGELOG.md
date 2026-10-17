@@ -4,6 +4,15 @@ All notable changes to the SVG Filter Kit. Versions follow
 [Semantic Versioning](https://semver.org/); release tags are `vX.Y.Z` and
 must match `SVGF_VERSION` in `svg-filters.php`.
 
+## [1.7.0]
+
+### Changed
+
+- Film grain: one *Grain strength* slider instead of the coupled *Original
+  weight* and *Grain strength* (whose sum had to stay about 1). The grain is
+  overlaid with that opacity; same look at the default (pixel difference
+  ≤ 1/255). Tunings of the former two values no longer apply.
+
 ## [1.6.0]
 
 ### Added
