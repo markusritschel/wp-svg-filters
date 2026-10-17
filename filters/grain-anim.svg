@@ -3,7 +3,7 @@
           data-category="motion" data-support="all" data-cost="high" data-demo="scene">
     <title>Living grain</title>
     <desc>Steps the noise `seed` discretely at about 12 fps for a projected-film flicker.</desc>
-    <feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="3" result="noise" data-tweak-baseFrequency="[0.2, 2] Grain size | Higher is finer">
+    <feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="3" result="noise" data-tweak-baseFrequency="[0.2, 2] Grain fineness | Higher gives finer grain">
       <animate attributeName="seed" values="1;2;3;4;5;6;7;8;9;10" dur=".8s" calcMode="discrete" repeatCount="indefinite" data-tweak-dur="[0.2, 3 s] Flicker cycle | Time for the 10 noise frames; lower flickers faster"/>
     </feTurbulence>
     <feColorMatrix in="noise" type="matrix" values=".33 .33 .33 0 0  .33 .33 .33 0 0  .33 .33 .33 0 0  0 0 0 0 1" result="mono"/>
