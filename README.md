@@ -121,9 +121,9 @@ live.
 |---|---|---|---|---|---|
 | duotone.svg | `fx-duotone` | color | Converts to grayscale, then blends two brand colors by brightness: the shadow color in the darks, the highlight color in the lights. | `flood-color` |  |
 | posterize.svg | `fx-posterize` | color | Discrete steps per channel flatten gradients into screen-print bands. | `tableValues` |  |
-| threshold.svg | `fx-threshold` | color | Cuts luminance into two ink tones for stencil and photocopy looks. | `flood-color` |  |
-| tint.svg | `fx-tint` | color | Keeps luminance and replaces hue and saturation with a flood color through the `color` blend mode. | `flood-color` |  |
-| grain.svg | `fx-grain` | texture | Blends high-frequency mono noise with `overlay` and mixes it back at about half strength. | `baseFrequency`, `k2`, `k3` |  |
+| threshold.svg | `fx-threshold` | color | Cuts luminance into two ink tones for stencil and photocopy looks. | `intercept`, `flood-color` |  |
+| tint.svg | `fx-tint` | color | Keeps luminance and replaces hue and saturation with a flood color through the `color` blend mode. | `flood-color`, `flood-opacity` |  |
+| grain.svg | `fx-grain` | texture | Blends high-frequency mono noise with `overlay` and mixes it back at about half strength. | `baseFrequency`, `slope` |  |
 | paper.svg | `fx-paper` | texture | Lights low-frequency noise as a height map and multiplies it over the image like a print on cotton paper. | `baseFrequency`, `surfaceScale` |  |
 | blur.svg | `fx-blur` | distortion | Gaussian blur whose edges fade out, for elements, text, icons and shapes. | `stdDeviation` |  |
 | blur.svg | `fx-blur-solid` | distortion | Gaussian blur with duplicated edges and forced opacity, so rectangular images and backgrounds keep a crisp border. | `stdDeviation` | Makes transparent areas opaque: not for text or cut-out shapes. Pair it with the `--bg` class. |
@@ -135,9 +135,9 @@ live.
 | bevel.svg | `fx-bevel` | light | Blurred alpha becomes a height map whose specular highlight is added back onto the source as a glossy rim. | `stdDeviation`, `surfaceScale`, `lighting-color`, `azimuth` | Text and icons. |
 | emboss.svg | `fx-emboss` | light | A 3×3 convolution kernel; swap the kernel for sharpen, edge detect or box blur. | `kernelMatrix` |  |
 | inner-shadow.svg | `fx-inner-shadow` | light | Inverts the alpha, blurs and offsets it and clips it to the shape, which CSS `box-shadow: inset` cannot do on text. | `stdDeviation`, `dx`, `dy`, `flood-color`, `flood-opacity` | Text and icons. |
-| marble.svg | `fx-marble` | fill | Stretched noise, recolored with a matrix and clipped to the source alpha, so text stays real, selectable text. | `baseFrequency`, `seed` | Text and icons. |
+| marble.svg | `fx-marble` | fill | Stretched noise mapped onto two colors by brightness and clipped to the source alpha, so text stays real, selectable text. | `baseFrequency`, `seed`, `flood-color` | Text and icons. |
 | liquid.svg | `fx-liquid` | glass | Displaces the backdrop through a smooth noise lens so content behind the pane bends; other browsers get a frosted fallback. | `baseFrequency`, `scale` | Chromium only. Use it through `.glass .glass--liquid` (backdrop-filter), not as an `.fx-` class. |
-| grain-anim.svg | `fx-grain-anim` | motion | Steps the noise `seed` discretely at about 12 fps for a projected-film flicker. | `baseFrequency`, `dur` |  |
+| grain-anim.svg | `fx-grain-anim` | motion | Steps the noise `seed` discretely at about 12 fps for a projected-film flicker. | `baseFrequency`, `dur`, `slope` |  |
 | hue-cycle.svg | `fx-hue-cycle` | motion | Rotates the hue through 360° with a single animated attribute, the cheapest animated filter there is. | `dur` |  |
 | melt.svg | `fx-melt` | motion | The displacement `scale` eases from 0 to 45 on hover, or on tap on touch screens. | `baseFrequency` | Needs `assets/svg-filters.js`. Duplicate the file with a new ID for independent instances. |
 | spotlight.svg | `fx-spotlight` | motion | JavaScript moves an `fePointLight` to the pointer over a noise surface. | `lighting-color`, `surfaceScale`, `z` | Needs `assets/svg-filters.js`. All `.fx-spotlight` elements share one light. |
