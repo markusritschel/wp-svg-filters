@@ -4,6 +4,12 @@ All notable changes to the SVG Filter Kit. Versions follow
 [Semantic Versioning](https://semver.org/); release tags are `vX.Y.Z` and
 must match `SVGF_VERSION` in `svg-filters.php`.
 
+## [1.8.1]
+
+### Changed
+
+- Flowing water: *Flow cycle length* (was *Flow cycle*).
+
 ## [1.8.0]
 
 ### Added
