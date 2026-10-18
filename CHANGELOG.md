@@ -4,6 +4,17 @@ All notable changes to the SVG Filter Kit. Versions follow
 [Semantic Versioning](https://semver.org/); release tags are `vX.Y.Z` and
 must match `SVGF_VERSION` in `svg-filters.php`.
 
+## [1.8.2]
+
+### Fixed
+
+- Smooth edges in the displacement filters (Refractive glass, Water wave,
+  Flowing water, Rough edges, RGB glitch): `feDisplacementMap` samples
+  without anti-aliasing in Chromium, so distorted edges showed pixel
+  steps; a final 3×3 smoothing step (`feConvolveMatrix`, in device pixels)
+  brings them to the edge quality of normal text. Hover melt is left as it
+  is (undistorted at rest).
+
 ## [1.8.1]
 
 ### Changed
