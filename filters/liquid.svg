@@ -6,5 +6,6 @@
     <feTurbulence type="fractalNoise" baseFrequency=".008 .012" numOctaves="2" seed="3" result="lens" data-tweak-baseFrequency="[0, 0.05] {pair} Lens frequency | Horizontal and vertical; lower gives larger, smoother bends"/>
     <feGaussianBlur in="lens" stdDeviation="2" result="smooth"/>
     <feDisplacementMap in="SourceGraphic" in2="smooth" scale="70" xChannelSelector="R" yChannelSelector="G" data-tweak-scale="[0, 150 px] Refraction strength"/>
+    <feConvolveMatrix order="3" kernelMatrix="0 1 0 1 4 1 0 1 0" divisor="8" preserveAlpha="false" edgeMode="none"/>
   </filter>
 </svg>
