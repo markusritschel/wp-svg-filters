@@ -4,7 +4,7 @@
     <title>Flowing water</title>
     <desc>SMIL animates `baseFrequency`, so the distortion field breathes.</desc>
     <feTurbulence type="fractalNoise" baseFrequency=".01 .04" numOctaves="2" seed="5" result="map">
-      <animate attributeName="baseFrequency" dur="9s" values=".01 .04; .016 .07; .01 .04" repeatCount="indefinite" data-tweak-dur="[2, 30 s] Flow cycle | Length of one flow cycle"/>
+      <animate attributeName="baseFrequency" dur="9s" values=".01 .04; .016 .07; .01 .04" repeatCount="indefinite" data-tweak-dur="[2, 30 s] Flow cycle length | Time for one full flow cycle; lower flows faster"/>
     </feTurbulence>
     <feDisplacementMap in="SourceGraphic" in2="map" scale="22" xChannelSelector="R" yChannelSelector="G" data-tweak-scale="[0, 80 px] Distortion strength"/>
   </filter>
