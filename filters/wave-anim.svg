@@ -7,5 +7,6 @@
       <animate attributeName="baseFrequency" dur="9s" values=".01 .04; .016 .07; .01 .04" repeatCount="indefinite" data-tweak-dur="[2, 30 s] Flow cycle length | Time for one full flow cycle; lower flows faster"/>
     </feTurbulence>
     <feDisplacementMap in="SourceGraphic" in2="map" scale="22" xChannelSelector="R" yChannelSelector="G" data-tweak-scale="[0, 80 px] Distortion strength"/>
+    <feConvolveMatrix order="3" kernelMatrix="0 1 0 1 4 1 0 1 0" divisor="8" preserveAlpha="false" edgeMode="none"/>
   </filter>
 </svg>

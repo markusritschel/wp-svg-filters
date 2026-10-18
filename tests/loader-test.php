@@ -109,6 +109,20 @@ foreach ( $meta as $id => $f ) {
 }
 check( true, 'every preset key is a tweak key of its filter' );
 
+// feDisplacementMap samples without anti-aliasing (Chromium): displacement filters end with a 3×3
+// smoothing step, except Hover melt (undistorted at rest, where smoothing would only soften it).
+foreach ( $meta as $id => $f ) {
+	if ( false === strpos( $f['markup'], '<feDisplacementMap' ) || 'fx-melt' === $id ) {
+		continue;
+	}
+	$aa = '<feConvolveMatrix order="3" kernelMatrix="0 1 0 1 4 1 0 1 0" divisor="8" preserveAlpha="false" edgeMode="none"/></filter>';
+	$markup = preg_replace( '/>\s+</', '><', trim( $f['markup'] ) );
+	if ( substr( $markup, -strlen( $aa ) ) !== $aa ) {
+		check( false, "{$id} ends with the anti-aliasing step" );
+	}
+}
+check( true, 'displacement filters end with the anti-aliasing step' );
+
 // Hint syntax 2: "[min, max unit] {type} Label | Description" (range, unit, type, description optional).
 foreach ( $meta as $id => $f ) {
 	foreach ( $f['tweaks'] as $t ) {

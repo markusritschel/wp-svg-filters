@@ -12,5 +12,6 @@
     <feBlend in="rg" in2="blueShift" mode="screen" result="rgb"/>
     <feTurbulence type="turbulence" baseFrequency="0 .12" numOctaves="1" seed="9" result="bands" data-tweak-baseFrequency="[0, 0.5] {pair} Slice frequency | Horizontal and vertical; keep the horizontal value at 0 for horizontal bands"/>
     <feDisplacementMap in="rgb" in2="bands" scale="18" xChannelSelector="R" yChannelSelector="A" data-tweak-scale="[0, 60 px] Slice displacement | How far the slices move"/>
+    <feConvolveMatrix order="3" kernelMatrix="0 1 0 1 4 1 0 1 0" divisor="8" preserveAlpha="false" edgeMode="none"/>
   </filter>
 </svg>
