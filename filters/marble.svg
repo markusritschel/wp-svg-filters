@@ -1,10 +1,15 @@
 <svg xmlns="http://www.w3.org/2000/svg">
   <filter id="fx-marble" color-interpolation-filters="sRGB"
-          data-category="fill" data-support="all" data-cost="medium" data-demo="type" data-demo-text="Marble" data-note="Text and icons.">
+          data-category="fill" data-support="all" data-cost="medium" data-demo="type" data-demo-text="Marble" data-note="Text and icons."
+          data-presets='{"Amethyst":{"feFlood|flood-color":"#2d1b69","feFlood:2|flood-color":"#efe6ff"},"Carrara":{"feFlood|flood-color":"#55565c","feFlood:2|flood-color":"#f6f5f1"},"Nero":{"feFlood|flood-color":"#0e0e10","feFlood:2|flood-color":"#9a9aa3"},"Malachite":{"feFlood|flood-color":"#0b3d2e","feFlood:2|flood-color":"#6fdcae"},"Lapis":{"feFlood|flood-color":"#10245e","feFlood:2|flood-color":"#7d97ee"},"Rose quartz":{"feFlood|flood-color":"#7a2f50","feFlood:2|flood-color":"#fbdbe7"},"Gold":{"feFlood|flood-color":"#5e3f0c","feFlood:2|flood-color":"#f8dc84"}}'>
     <title>Texture fill</title>
-    <desc>Stretched noise, recolored with a matrix and clipped to the source alpha, so text stays real, selectable text.</desc>
+    <desc>Stretched noise mapped onto two colors by brightness and clipped to the source alpha, so text stays real, selectable text.</desc>
     <feTurbulence type="fractalNoise" baseFrequency=".012 .07" numOctaves="4" seed="7" result="veins" data-tweak-baseFrequency="[0, 0.2] {pair} Vein frequency | Horizontal and vertical; a higher vertical value gives more stripes" data-tweak-seed="[0, 100] Pattern variant | Seed of the noise pattern"/>
-    <feColorMatrix in="veins" type="matrix" values="2.2 0 0 0 -.45  0 1.1 0 0 -.1  0 0 2.6 0 -.25  0 0 0 0 1" result="color"/>
+    <feColorMatrix in="veins" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1.05 2.065 .385 0 -1.25" result="mask"/>
+    <feFlood flood-color="#2d1b69" result="dark" data-tweak-flood-color="Vein color | Color of the dark veins"/>
+    <feFlood flood-color="#efe6ff" result="light" data-tweak-flood-color="Base color | Color between the veins"/>
+    <feComposite in="light" in2="mask" operator="in" result="lit"/>
+    <feComposite in="lit" in2="dark" operator="over" result="color"/>
     <feComposite in="color" in2="SourceAlpha" operator="in"/>
   </filter>
 </svg>

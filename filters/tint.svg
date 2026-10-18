@@ -3,7 +3,7 @@
           data-category="color" data-support="all" data-cost="low" data-demo="scene">
     <title>Color tint</title>
     <desc>Keeps luminance and replaces hue and saturation with a flood color through the `color` blend mode.</desc>
-    <feFlood flood-color="#e0705b" result="tone" data-tweak-flood-color="Tint color"/>
+    <feFlood flood-color="#e0705b" flood-opacity="1" result="tone" data-tweak-flood-color="Tint color" data-tweak-flood-opacity="[0, 1] Tint strength | 0 keeps the original colors, 1 replaces them fully"/>
     <feBlend in="tone" in2="SourceGraphic" mode="color" result="tinted"/>
     <feComposite in="tinted" in2="SourceAlpha" operator="in"/>
   </filter>

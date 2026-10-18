@@ -97,7 +97,8 @@ check( array( 'feFlood|flood-color', 'feFlood:2|flood-color' ) === array_column(
 
 // Presets: name => tweak key => value; every key belongs to a tweak of its filter.
 check( '0 -1 0 -1 5 -1 0 -1 0' === ( $meta['fx-emboss']['presets']['Sharpen']['feConvolveMatrix|kernelMatrix'] ?? null ), 'presets of fx-emboss' );
-check( array() === $duo['presets'], 'no presets: empty array' );
+check( '#fcbd8f' === ( $duo['presets']['Midnight peach']['feFlood:2|flood-color'] ?? null ), 'presets of fx-duotone' );
+check( array() === $meta['fx-blur']['presets'], 'no presets: empty array' );
 foreach ( $meta as $id => $f ) {
 	$keys = array_column( $f['tweaks'], 'key' );
 	foreach ( $f['presets'] as $name => $values ) {
